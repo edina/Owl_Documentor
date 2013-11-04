@@ -1,0 +1,62 @@
+
+body {background: #fff; color:#404040; font:76% Verdana,Tahoma,Arial,sans-serif; margin:0 auto; padding:0;}
+a {color:#4088b8; font-weight:700; text-decoration:none;}
+a:hover {text-decoration:underline;}
+a img {border:0;}
+p {margin:0 0 18px 10px;}
+ul,ol,dl {font-size:0.9em; margin:2px 0 16px 35px;}
+ul ul,ol ol {margin:4px 0 4px 35px;}
+blockquote {border:1px solid #dadada; font-size:0.9em; margin:20px 10px; padding:8px;}
+blockquote p {margin:0;}
+
+/* Headers */
+h1 {color:#4088b8; font-size:3.6em; letter-spacing:-3px; margin:0 0 20px 25px;}
+h1 a {color:#4088b8; text-transform:none;}
+h2 {border-bottom:4px solid #dadada; color:#4088b8; font-size:1.4em; letter-spacing:-1px; margin:0 0 10px; padding:0 2px 2px 5px;}
+h3 {border-bottom:1px solid #dadada; color:#4088b8; font-size:1.2em; font-weight:700; margin:10px 0 8px; padding:1px 2px 2px 3px;}
+h4 {border-bottom:1px solid #dadada; color:#4088b8; font-size:1.0em; font-weight:700; margin:10px 0 8px; padding:1px 2px 2px 3px;}
+h5 {border-bottom:1px dotted #dadada; color:#4088b8; font-size:1.0em; font-weight:500; margin:10px 0 8px; padding:1px 2px 2px 3px;}
+/* Main wrap */
+#wrap {color:#404040; margin:10px auto; padding:0; width: 80%/* 970px; */}
+
+.ont_outer_div {border:1px solid #dadada; padding:1em; margin:1em}
+.target {color:#404040;}
+.overview {vertical-align: text-top; width:8em}
+td.label {padding: 0 1em; border-right: 1px solid #dadada;  border-bottom: 1px solid #dadada;}
+td.value {padding: 0 1em; border-bottom: 1px solid #dadada;}
+.ont_class_name {font-size:larger; background:#4088b8; color:#dadada; padding:.25em }
+.uri_row > .value, .equivelant_row > .value, .parent_row > .value {
+  color: #cd5c5c; background:#ffffe0; border: 1px solid #ffa07a; padding:0.1em; margin: 0.1em; padding-left: 1em
+  }
+.scrolldown {
+background-image: url('/test/ontology/img/treeView/dotted/tvile.gif');
+background-repeat: no-repeat;
+padding-left: 20px;  /* width of the image plus a little extra padding */
+display: block;  /* may not need this, but I've found I do */
+}
+.scrollup {background-image: url('/test/ontology/img/treeView/dotted/tvilc.gif');
+background-repeat: no-repeat;
+padding-left: 20px;  /* width of the image plus a little extra padding */
+display: block;  /* may not need this, but I've found I do */
+}
+
+.node {
+  stroke-width: 1.5px;
+}
+
+.link {
+  stroke: #999;
+  stroke-opacity: .6;
+}
+.node text {
+  pointer-events: none;
+}
+.ontClass {
+  fill: orange;
+  stroke: black;
+  stroke-width:1px;
+  font: 2em sans-serif;
+}
+.ontProp {
+  fill: blue;
+}
