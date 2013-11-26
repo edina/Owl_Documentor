@@ -1,0 +1,961 @@
+#!/usr/bin/perl
+
+use strict;
+use warnings;
+
+use XML::Simple;
+use File::Slurp;
+use Data::Printer;
+my $data = {};
+$data->{classes}    = {};
+$data->{properties} = {};
+
+die "usage: owl_doc <ontology_file>\n" unless $ARGV[0];
+
+my $xml_in = read_file( $ARGV[0] );
+
+my $xml = XMLin($xml_in);
+
+my $ns = get_namespaces($xml);
+
+my ( $rdf, $rdfs, $owl, $dct, $vann, $foaf ) = (
+  $ns->{rdf_syntax}, $ns->{rdf_schema}, $ns->{owl}, $ns->{dc_terms},
+  $ns->{vann}, $ns->{foaf}
+);
+
+#---------------------------------------------------------------------------
+#  Build the relationships between Properties and Classes
+#---------------------------------------------------------------------------
+foreach my $class ( @{ $xml->{"$rdfs:Class"} } ) {
+  $data->{classes}->{ $class->{"$rdf:about"} } = {};
+  $data->{classes}->{ $class->{"$rdf:about"} }->{name}
+      = $class->{"$rdfs:label"};
+}
+
+foreach my $prop ( @{ $xml->{"$rdf:Property"} } ) {
+  $data->{properties}->{ $prop->{"$rdf:about"} } = {};
+  my $this = $data->{properties}->{ $prop->{"$rdf:about"} };
+  $this->{name} = $prop->{"$rdfs:label"};
+  $this->{appears_in} = [] unless exists $this->{appears_in};
+
+  if ( exists $prop->{"$rdfs:domain"} ) {
+    if ( ref $prop->{"$rdfs:domain"} eq 'ARRAY' ) {
+      foreach my $domain ( @{ $prop->{"$rdfs:domain"} } ) {
+
+        $data->{classes}->{ $domain->{"$rdf:resource"} }->{properties} = []
+            unless exists $data->{classes}->{ $domain->{"$rdf:resource"} }
+            ->{properties};
+        push @{ $data->{classes}->{ $domain->{"$rdf:resource"} }->{properties}
+        }, $prop->{"$rdf:about"};
+        push @{ $this->{appears_in} }, $domain->{"$rdf:resource"};
+
+      } ## end foreach my $domain ( @{ $prop...})
+    } elsif ( ref $prop->{"$rdfs:domain"} eq 'HASH' ) {
+      $data->{classes}->{ $prop->{"$rdfs:domain"}->{"$rdf:resource"} }
+          ->{properties} = []
+          unless exists $data->{classes}
+          ->{ $prop->{"$rdfs:domain"}->{"$rdf:resource"} }->{properties};
+      push @{ $data->{classes}->{ $prop->{"$rdfs:domain"}->{"$rdf:resource"} }
+            ->{properties} },
+          $prop->{"$rdf:about"};
+      push @{ $this->{appears_in} },
+          $prop->{"$rdfs:domain"}->{"$rdf:resource"};
+    } ## end elsif ( ref $prop->{"$rdfs:domain"...})
+  } ## end if ( exists $prop->{"$rdfs:domain"...})
+  if ( exists $prop->{"$rdfs:range"} ) {
+    $data->{classes}->{ $prop->{"$rdfs:range"}->{"$rdf:resource"} }
+        ->{value_for} = []
+        unless exists $data->{classes}
+        ->{ $prop->{"$rdfs:range"}->{"$rdf:resource"} }->{value_for};
+    push @{ $data->{classes}->{ $prop->{"$rdfs:range"}->{"$rdf:resource"} }
+          ->{value_for} },
+        $prop->{"$rdf:about"};
+  } ## end if ( exists $prop->{"$rdfs:range"...})
+
+} ## end foreach my $prop ( @{ $xml->...})
+
+#---------------------------------------------------------------------------
+#  Now build the html for the page
+#---------------------------------------------------------------------------
+
+my $records = {};
+$records->{classes}    = {};
+$records->{properties} = {};
+
+foreach my $class ( @{ $xml->{'rdfs:Class'} } ) {
+  my $lookups = undef;
+  $lookups = $data->{classes}->{ $class->{"$rdf:about"} }
+      if exists $data->{classes}->{ $class->{"$rdf:about"} };
+
+  my $html = make_class_block( $class, $lookups );
+  $records->{'classes'}->{ $class->{'rdfs:label'} } = $html;
+} ## end foreach my $class ( @{ $xml...})
+
+foreach my $property ( @{ $xml->{'rdf:Property'} } ) {
+  my $lookups = undef;
+  $lookups = $data->{properties}->{ $property->{"$rdf:about"} }
+      if exists $data->{properties}->{ $property->{"$rdf:about"} };
+  my $html = make_property_block( $property, $lookups );
+  $records->{'properties'}->{ $property->{'rdfs:label'} } = $html;
+} ## end foreach my $property ( @{ $xml...})
+
+my ( $title, $return ) = make_metadata_block($xml);
+#my ( $title, $return ) = ("Foo", "");
+
+my $head = "<!DOCTYPE html>\n
+<html lang='en-uk'>\n
+  <head>\n
+  <meta charset='utf-8'>\n
+  <title>$title</title>\n";
+
+$head .= '  
+<style>
+body {background: #fff; color:#404040; font:76% Verdana,Tahoma,Arial,sans-serif; margin:0 auto; padding:0;}
+a {color:#4088b8; font-weight:700; text-decoration:none;}
+a:hover {text-decoration:underline;}
+a img {border:0;}
+p {margin:0 0 18px 10px;}
+ul,ol,dl {font-size:0.9em; margin:2px 0 16px 35px;}
+ul ul,ol ol {margin:4px 0 4px 35px;}
+blockquote {border:1px solid #dadada; font-size:0.9em; margin:20px 10px; padding:8px;}
+blockquote p {margin:0;}
+
+/* Headers */
+h1 {color:#4088b8; font-size:3.6em; letter-spacing:-3px; margin:0 0 20px 25px;}
+h1 a {color:#4088b8; text-transform:none;}
+h2 {border-bottom:4px solid #dadada; color:#4088b8; font-size:1.4em; letter-spacing:-1px; margin:0 0 10px; padding:0 2px 2px 5px;}
+h3 {border-bottom:1px solid #dadada; color:#4088b8; font-size:1.2em; font-weight:700; margin:10px 0 8px; padding:1px 2px 2px 3px;}
+h4 {border-bottom:1px solid #dadada; color:#4088b8; font-size:1.0em; font-weight:700; margin:10px 0 8px; padding:1px 2px 2px 3px;}
+h5 {border-bottom:1px dotted #dadada; color:#4088b8; font-size:1.0em; font-weight:500; margin:10px 0 8px; padding:1px 2px 2px 3px;}
+/* Main wrap */
+#wrap {color:#404040; margin:10px auto; padding:0; width: 80%/* 970px; */}
+
+.ont_outer_div {border:1px solid #dadada; padding:1em; margin:1em}
+.target {color:#404040;}
+.overview {vertical-align: text-top; width:8em}
+td.label {padding: 0 1em; border-right: 1px solid #dadada;  border-bottom: 1px solid #dadada;}
+td.value {padding: 0 1em; border-bottom: 1px solid #dadada;}
+.ont_class_name {font-size:larger; background:#4088b8; color:#dadada; padding:.25em }
+.uri_row > .value, .equivelant_row > .value, .parent_row > .value {
+  color: #cd5c5c; background:#ffffe0; border: 1px solid #ffa07a; padding:0.1em; margin: 0.1em; padding-left: 1em
+  }
+.scrolldown {
+background-image: url("/test/ontology/img/treeView/dotted/tvile.gif");
+background-repeat: no-repeat;
+padding-left: 20px;  /* width of the image plus a little extra padding */
+display: block;  /* may not need this, but I\'ve found I do */
+}
+.scrollup {background-image: url("/test/ontology/img/treeView/dotted/tvilc.gif");
+background-repeat: no-repeat;
+padding-left: 20px;  /* width of the image plus a little extra padding */
+display: block;  /* may not need this, but I\'ve found I do */
+}
+
+path.arc {
+  cursor: move;
+  fill: #fff;
+}
+
+.node {
+  font-size: 11px;
+}
+
+.node:hover {
+  fill: red !important;
+}
+
+.link {
+  fill: none;
+  stroke: #4169E1;
+  stroke-opacity: .3;
+  pointer-events: none;
+}
+
+.link.source, .link.target {
+  stroke-opacity: 1;
+  stroke-width: 2px;
+}
+
+.node.source {
+  fill: purple !important;
+}
+
+.node.target {
+  fill: teal !important;
+}
+
+.link.source {
+  stroke: teal;
+}
+
+.link.target {
+  stroke: purple;
+}
+</style>';
+
+$head .= "\n
+  <script src='http://d3js.org/d3.v3.min.js'></script>\n
+  <script type='text/javascript' src='http://code.jquery.com/jquery-1.9.1.js'></script>\n
+  <script type='text/javascript' src='http://_mbostock.github.com/d3/d3.js?2.6.0'></script>\n
+  <script type='text/javascript' src='http://_mbostock.github.com/d3/d3.layout.js?2.6.0'></script>\n
+  <script type='text/javascript' src='http://_`mbostock.github.com/d3/d3.geom.js?2.6.0'></script>\n
+  <script language='javascript' type='text/javascript'>\n
+    \$().ready(function() {\n
+      \$('.scrollable').on('click', function(e) {\n
+        \$(this).next().slideToggle();\n
+        \$(this).toggleClass('scrollup scrolldown')\n
+      });\n
+    });\n
+  </script>\n
+  </head>\n
+  <body>\n";
+
+$return
+    = $head
+    . $return
+    . "<h2>Relationship map</h2>\n"
+    . "<p>Hover over the name of a node.<br />
+<span style='color: purple'>Purple</span> lines indicate the node is a value for something <br />
+<span style='color: teal'>Teal</span> lines indicate the node has a value of something<br />
+(eg: <code>Has URL</code> is a property for <code>Organisation</code> & <code>Repository</code>, and its content is a <code>URL</code> object)<br />
+The nodes at the end of the lines should also change color, matching the lines.</p>\n<div id='map'>\n"
+    . make_vector_map($data)
+    ."\n</div>\n";
+$return .= "<h2>Classes</h2>\n";
+foreach my $key ( sort { $a cmp $b } keys %{ $records->{'classes'} } ) {
+  $return .= $records->{'classes'}->{$key};
+}
+$return .= "<h2>Properties</h2>\n";
+foreach my $key ( sort { $a cmp $b } keys %{ $records->{'properties'} } ) {
+  $return .= $records->{'properties'}->{$key};
+}
+
+$return .= "</div></body>\n</html>\n";
+print $return;
+
+exit;
+
+#===  FUNCTION  ================================================================
+#         NAME:  make_metadata_block
+#      PURPOSE:  Creates a chunk of html for the metadata for the ontology
+#   PARAMETERS:  $xml
+#      RETURNS:  ($title, $html)
+#  DESCRIPTION:  ????
+#       THROWS:  no exceptions
+#     COMMENTS:  none
+#     SEE ALSO:  n/a
+#===============================================================================
+sub make_metadata_block {
+  my ($xml) = @_;
+
+  my $html;
+
+  my $title = '';
+  if ( exists $xml->{"$owl:Ontology"} ) {
+    $html .= "<div class='metadata'>\n";
+    my @namespaces;
+    unless ( ref $xml->{"$owl:Ontology"} eq 'ARRAY' ) {
+      my $t = $xml->{"$owl:Ontology"};
+      $xml->{"$owl:Ontology"} = [$t];
+    }
+    foreach my $ont ( @{ $xml->{"$owl:Ontology"} } ) {
+
+      # seperate out the descriptive metadata from the namespace URIs
+      next if exists $ont->{"$dct:title"};
+
+      push @namespaces,
+          { $ont->{"$vann:preferredNamespaceUri"} => $ont->{"$rdf:about"} };
+    } ## end foreach my $ont ( @{ $xml->...})
+
+    foreach my $ont ( @{ $xml->{"$owl:Ontology"} } ) {
+
+      # seperate out the descriptive metadata from the namespace URIs
+      if ( exists $ont->{"$dct:title"} ) {
+
+        #warn Dumper($ont);
+        $title = $ont->{"$dct:title"};
+        $html .= "<h1>$title</h1>\n";
+        if ( exists $ont->{"$dct:creator"} ) {
+          $html .= "<h2>Authors</h2>\n<ul id='authors'>\n";
+          if ( ref $ont->{"$dct:creator"} eq 'ARRAY' ) {
+            foreach my $creator ( @{ $ont->{"$dct:creator"} } ) {
+              $html
+                  .= "<li><a href='"
+                  . $creator->{"$foaf:Person"}->{"$rdf:about"}
+                  . "' class='creator' title='Link to information about the Author'>"
+                  . $creator->{"$foaf:Person"}{"$foaf:name"}
+                  . "</a></li>\n";
+            } ## end foreach my $creator ( @{ $ont...})
+          } else {
+            $html
+                .= "<li><a href='"
+                . $ont->{"$dct:creator"}->{"$foaf:Person"}->{"$rdf:about"}
+                . "' class='creator' title='Link to information about the Author'>"
+                . $ont->{"$dct:creator"}->{"$foaf:Person"}{"$foaf:name"}
+                . "</a></li>\n";
+          } ## end else [ if ( ref $ont->{"$dct:creator"...})]
+          $html .= "</ul>\n";
+        } ## end if ( exists $ont->{"$dct:creator"...})
+        $html .= "<h2>Created</h2>\n<p>Created: ";
+        $html .=
+              $ont->{"$dct:created"}
+            ? $ont->{"$dct:created"}->{'content'}
+            : 'Unknown';
+        $html .= "</p>\n<p>Last Modified: ";
+        $html .=
+              $ont->{"$dct:modified"}
+            ? $ont->{"$dct:modified"}->{'content'}
+            : 'Unknown';
+        $html .= "</p>\n";
+        $html .= "<h2>Namespace URI</h2>\n";
+        if ( exists $ont->{"$vann:preferredNamespaceUri"} ) {
+          $html .= "<p>URI: ";
+          $html
+              .= $ont->{"$vann:preferredNamespaceUri"}
+              . "<br />Preferred Prefix: "
+              . $ont->{"$vann:preferredNamespacePrefix"};
+        } else {
+          $html .= "<p>\n";
+          $html .= $ont->{"$rdf:about"} ? $ont->{"$rdf:about"} : 'Undefined';
+          $html .= "</p>\n";
+        }
+        if ( exists $ont->{"$foaf:homepage"} ) {
+          $html .= "<h2>Home Page</h2>\n<p><a href='";
+          $html .= $ont->{"$foaf:homepage"}->{"$rdf:resource"};
+          $html
+              .= "' target='_blank' title='Open the homepage in a new tab'>";
+          $html .= $ont->{"$foaf:homepage"}->{"$rdf:resource"};
+          $html .= "</a></p>\n";
+        } ## end if ( exists $ont->{"$foaf:homepage"...})
+        $html
+            .= "<h2 class=' scrollable scrollup'>Namespace referenced</h2>\n<ul id='namespaces' >";
+        foreach my $ns (@namespaces) {
+          my ( $code, $uri ) = each %{$ns};
+          $html
+              .= "<li>$code [<a href='$uri' class='ns_uri' title='Link to the namespace URI'>$uri</a>]</li>\n";
+        }
+        $html .= "</ul>\n";
+        if ( exists $ont->{"$dct:description"} ) {
+          $html
+              .= "<h2>Abstract</h2>\n<p>"
+              . $ont->{"$dct:description"}
+              . "</p>\n";
+        } ## end if ( exists $ont->{"$dct:description"...})
+      } ## end if ( exists $ont->{"$dct:title"...})
+    } ## end foreach my $ont ( @{ $xml->...})
+    $html .= "</div>\n";
+  } ## end if ( exists $xml->{"$owl:Ontology"...})
+
+  return ( $title, $html );
+} ## end sub make_metadata_block
+
+#===  FUNCTION  ================================================================
+#         NAME:  make_vector_map
+#      PURPOSE:  Makes the bouncy vector map of classes & properties based on
+#                the mapping data collected
+#   PARAMETERS:  $data
+#      RETURNS:  $html
+#  DESCRIPTION:  ????
+#       THROWS:  no exceptions
+#     COMMENTS:  none
+#     SEE ALSO:  n/a
+#===============================================================================
+sub make_vector_map {
+  my $data = shift;
+
+  my $html;
+
+  my ( @nodes, @links, %index );
+
+  my ( %props, %classes, $total_props, $total_classes );
+
+  #------------------------------------------------------------------------
+  # We need a list of nodes, and what each links to.
+  # To ensure the imports array is unique, we'll use the smart-match
+  # operator to check for existence.
+  # Also note that spaces are a problem, so they're all replaced with
+  #------------------------------------------------------------------------
+  my %t;
+
+  # Map the classes to properties
+  foreach my $k ( sort keys %{ $data->{classes} } ) {
+
+    # Set up the class leaf node
+    my $name = $k;
+    $name = $data->{classes}->{$k}->{name}
+        if exists $data->{classes}->{$k}->{name};
+    $name =~ s/\s/\\u00A0/g;
+    $name = 'rjb.class.' . $name;
+    $t{$name} = [] unless exists $t{$name};
+
+    # ... and add the property nodes to the list of imports
+    if ( exists $data->{classes}->{$k}->{properties} ) {
+      foreach my $prop ( @{ $data->{classes}->{$k}->{properties} } ) {
+
+        # Set up the property leaf node
+        my $nm = $prop;
+        $nm = $data->{properties}->{$prop}->{name}
+            if exists $data->{properties}->{$prop}->{name};
+        $nm =~ s/\s/\\u00A0/g;
+        $nm = 'rjb.property.' . $nm;
+        $t{$nm} = [] unless exists $t{$nm};
+
+        # and add the property to the class
+        unless ( $nm ~~ @{ $t{$name} } ) {
+          push @{ $t{$name} }, $nm;
+        }
+      } ## end foreach my $prop ( @{ $data...})
+    } ## end if ( exists $data->{classes...})
+
+    # ... and the links for properties that have classes as values
+    if ( exists $data->{classes}->{$k}->{value_for} ) {
+      foreach my $prop ( @{ $data->{classes}->{$k}->{value_for} } ) {
+
+        # get the property leaf node name
+        my $nm = $prop;
+        $nm = $data->{properties}->{$prop}->{name}
+            if exists $data->{properties}->{$prop}->{name};
+        $nm =~ s/\s/\\u00A0/g;
+        $nm = 'rjb.property.' . $nm;
+        $t{$nm} = [] unless exists $t{$nm};
+
+        # and add the property to the class
+        unless ( $name ~~ @{ $t{$nm} } ) {
+          push @{ $t{$nm} }, $name;
+        }
+      } ## end foreach my $prop ( @{ $data...})
+    } ## end if ( exists $data->{classes...})
+  } ## end foreach my $k ( sort keys %...)
+
+  # and convert the hash into JSON
+  foreach my $k ( keys %t ) {
+    my $line = '{ "name" : "' . $k . '", "imports" : [';
+    if ( scalar @{ $t{$k} } ) {
+      my @ps = ();
+      foreach my $p ( @{ $t{$k} } ) {
+        push @ps, $p;
+      }
+      $line .= '"';
+      $line .= join '", "', @ps;
+      $line .= '"';
+    } ## end if ( scalar @{ $t{$k} ...})
+    $line .= ']}';
+    push @nodes, $line;
+  } ## end foreach my $k ( keys %t )
+
+  #-------------------------------------------------------------------------
+  #  The bundle is a list of objects, and the objects they link to:
+  #  Classes have properties as links (Organisation links to hasRepository)
+  #  Some properties have classes as links (hasRepository links to class
+  #    Repository)
+  #-------------------------------------------------------------------------
+  my $classes;
+  $classes = join( ",\n", @nodes );
+  $classes = '[
+  ' . $classes . "\n]\n";
+
+  $html .= '<script type="text/javascript" charset="utf-8">
+  
+  /*
+    This is the array of nodes
+    Each node is bodged to have heirarchy, because that groups things together
+      (Classes with Classes, Properties with Proeprties)
+    Each node has a name (with spaces replaced by the utf-8 "non-breaking
+      space" character) and a list of 0+ "imports" (Classes import Properties
+      and Properties may import Classes [when the value of that Property is
+      defined as being a Class object)
+      (eg: "Has URL" is a property for "Organisation" & "Repository", and its
+      content is a "URL" Class object)
+  */
+  ';
+
+  $html .= "var classes = $classes\n";
+
+  $html .= '
+
+/*
+  This needs to be early, so its defined when later code needs
+  to call it
+*/
+
+var packages = {
+
+  // Lazily construct the package hierarchy from class names.
+  root: function(classes) {
+    var map = {};
+
+    function find(name, data) {
+      var node = map[name], i;
+      if (!node) {
+        node = map[name] = data || {name: name, children: []};
+        if (name.length) {
+          node.parent = find(name.substring(0, i = name.lastIndexOf(".")));
+          node.parent.children.push(node);
+          node.key = name.substring(i + 1);
+        }
+      }
+      return node;
+    }
+
+    classes.forEach(function(d) {
+      find(d.name, d);
+    });
+    return map[""];
+  },
+
+  // Return a list of imports for the given array of nodes.
+  imports: function(nodes) {
+    var map = {},
+        imports = [];
+
+    // Compute a map from name to node.
+    nodes.forEach(function(d) {
+      map[d.name] = d;
+    });
+
+    // For each import, construct a link from the source to target node.
+    nodes.forEach(function(d) {
+      if (d.imports) d.imports.forEach(function(i) {
+        imports.push({source: map[d.name], target: map[i]});
+      });
+    });
+
+    return imports;
+  }
+};
+
+var w = 720,
+    h = 540,
+    rx = w / 2,
+    ry = h / 2,
+    m0,
+    rotate = 0;
+
+var splines = [];
+
+var cluster = d3.layout.cluster()
+    .size([360, ry - 120])
+    .sort(function(a, b) { return d3.ascending(a.key, b.key); });
+
+var bundle = d3.layout.bundle();
+
+var line = d3.svg.line.radial()
+    .interpolate("bundle")
+    .tension(.65)
+    .radius(function(d) { return d.y; })
+    .angle(function(d) { return d.x / 180 * Math.PI; });
+
+// Add an "svg" object to the page "dom"
+// This is what D3 adds its charts to!!
+var diva =  d3.select("#map");
+var div = diva.insert("div")
+    .style("width", w + "px")
+    .style("height", w + "px")
+    .style("-webkit-backface-visibility", "hidden");
+
+var svg = div.append("svg")
+    .attr("width", w)
+    .attr("height", h)
+  .append("g")
+    .attr("transform", "translate(" + rx + "," + ry + ")");
+
+
+d3.select(window)
+    .on("mousemove", mousemove)
+    .on("mouseup", mouseup);
+
+
+function mouse(e) {
+  return [e.pageX - rx, e.pageY - ry];
+}
+
+function mousedown() {
+  m0 = mouse(d3.event);
+  d3.event.preventDefault();
+}
+
+function mousemove() {
+  if (m0) {
+    var m1 = mouse(d3.event),
+        dm = Math.atan2(cross(m0, m1), dot(m0, m1)) * 180 / Math.PI;
+    div.style("-webkit-transform", "translateY(" + (ry - rx) + "px)rotateZ(" + dm + "deg)translateY(" + (rx - ry) + "px)");
+  }
+}
+
+function mouseup() {
+  if (m0) {
+    var m1 = mouse(d3.event),
+        dm = Math.atan2(cross(m0, m1), dot(m0, m1)) * 180 / Math.PI;
+
+    rotate += dm;
+    if (rotate > 360) rotate -= 360;
+    else if (rotate < 0) rotate += 360;
+    m0 = null;
+
+    div.style("-webkit-transform", null);
+
+    svg
+        .attr("transform", "translate(" + rx + "," + ry + ")rotate(" + rotate + ")")
+      .selectAll("g.node text")
+        .attr("dx", function(d) { return (d.x + rotate) % 360 < 180 ? 8 : -8; })
+        .attr("text-anchor", function(d) { return (d.x + rotate) % 360 < 180 ? "start" : "end"; })
+        .attr("transform", function(d) { return (d.x + rotate) % 360 < 180 ? null : "rotate(180)"; });
+  }
+}
+
+function mouseover(d) {
+  svg.selectAll("path.link.target-" + d.key)
+      .classed("target", true)
+      .each(updateNodes("source", true));
+
+  svg.selectAll("path.link.source-" + d.key)
+      .classed("source", true)
+      .each(updateNodes("target", true));
+}
+
+function mouseout(d) {
+  svg.selectAll("path.link.source-" + d.key)
+      .classed("source", false)
+      .each(updateNodes("target", false));
+
+  svg.selectAll("path.link.target-" + d.key)
+      .classed("target", false)
+      .each(updateNodes("source", false));
+}
+
+function updateNodes(name, value) {
+  return function(d) {
+    if (value) this.parentNode.appendChild(this);
+    svg.select("#node-" + d[name].key).classed(name, value);
+  };
+}
+
+function cross(a, b) {
+  return a[0] * b[1] - a[1] * b[0];
+}
+
+function dot(a, b) {
+  return a[0] * b[0] + a[1] * b[1];
+}
+  
+
+svg.append("svg:path")
+    .attr("class", "arc")
+    .attr("d", d3.svg.arc().outerRadius(ry - 120).innerRadius(0).startAngle(0).endAngle(2 * Math.PI))
+    .on("mousedown", mousedown);
+
+  var nodes = cluster.nodes(packages.root(classes)),
+      links = packages.imports(nodes),
+      splines = bundle(links);
+
+  var path = svg.selectAll("path.link")
+      .data(links)
+    .enter().append("svg:path")
+      .attr("class", function(d) { return "link source-" + d.source.key + " target-" + d.target.key; })
+      .attr("d", function(d, i) { return line(splines[i]); });
+
+  svg.selectAll("g.node")
+      .data(nodes.filter(function(n) { return !n.children; }))
+    .enter().append("svg:g")
+      .attr("class", "node")
+      .attr("id", function(d) { return "node-" + d.key; })
+      .attr("transform", function(d) { return "rotate(" + (d.x - 90) + ")translate(" + d.y + ")"; })
+    .append("svg:text")
+      .attr("dx", function(d) { return d.x < 180 ? 8 : -8; })
+      .attr("dy", ".31em")
+      .attr("text-anchor", function(d) { return d.x < 180 ? "start" : "end"; })
+      .attr("transform", function(d) { return d.x < 180 ? null : "rotate(180)"; })
+      .text(function(d) { return d.key; })
+      .on("mouseover", mouseover)
+      .on("mouseout", mouseout);
+
+
+    </script>';
+
+  return $html;
+} ## end sub make_vector_map
+
+#===  FUNCTION  ================================================================
+#         NAME:  make_class_block
+#      PURPOSE:  Creates a chunck of html for each class object
+#   PARAMETERS:  $class, $lookups
+#      RETURNS:  $html
+#  DESCRIPTION:  Each chunk has a list of properties that the class has, and a
+#                list of the properties for which that class is a value
+#       THROWS:  no exceptions
+#     COMMENTS:  none
+#     SEE ALSO:  n/a
+#===============================================================================
+sub make_class_block {
+  my ( $class, $lookups ) = @_;
+
+  my $html = '';
+  $html .= "<div class='ont_outer_div'>\n";
+  $html .= "<a name='" . $class->{"$rdf:about"} . "' class='target'></a>\n";
+  $html
+      .= "<div class='ont_class_name'><span class='label'>Class:</span> <span class='value'>"
+      . $class->{"$rdf:about"}
+      . "</span></div>\n";
+  $html .= "<table>\n";
+  $html
+      .= "<tr class='label_row'><td rowspan='4' class='overview'>Overivew</td><td class='label'>Label</td><td class='value'>"
+      . $class->{"$rdfs:label"}
+      . "</td></tr>\n";
+  if ( exists $class->{"$rdf:about"} ) {
+    $html
+        .= "<tr class='uri_row'><td class='label'>URI</td><td class='value'>"
+        . $class->{"$rdf:about"}
+        . "</td></tr>\n";
+  } ## end if ( exists $class->{"$rdf:about"...})
+  if ( exists $class->{"$rdfs:subClassOf"} ) {
+    $html
+        .= "<tr class='parent_row'><td class='label'>Subclassed from...</td><td class='value'>"
+        . $class->{"$rdfs:subClassOf"}
+        . "</td></tr>\n";
+  } ## end if ( exists $class->{"$rdfs:subClassOf"...})
+  if ( exists $class->{"$owl:equivalentClass"} ) {
+    $html
+        .= "<tr class='equivelant_row'><td class='label'>Equivelant to...</td><td class='value'>"
+        . $class->{"$owl:equivalentClass"}->{"$rdf:resource"}
+        . "</td></tr>\n";
+  } ## end if ( exists $class->{"$owl:equivalentClass"...})
+
+  $html .= "</table>\n";
+
+  if ( exists $class->{"rdfs:comment"} ) {
+    $html .= "<p class='description'>" . $class->{"$rdfs:comment"} . "</p>\n";
+  }
+  if ( defined $lookups
+    && exists $lookups->{'properties'} )
+  {
+    $html
+        .= "<div class='properties'><span class='label scrollable scrolldown'>Properties</span>\n";
+    $html .= "<ul class='properties_list' style='display:none'>\n";
+    foreach my $property ( @{ $lookups->{'properties'} } ) {
+      $html
+          .= "<li><a href='#"
+          . $property
+          . "' class='iri'>$property</a></li>\n";
+    } ## end foreach my $property ( @{ $lookups...})
+    $html .= "</ul>\n";
+    $html .= "</div>\n";
+
+  } ## end if ( defined $lookups ...)
+  if ( defined $lookups
+    && exists $lookups->{'value_for'} )
+  {
+    $html
+        .= "<div class='ranges'><span class='label scrollable scrolldown'>Is a value for</span>\n";
+    $html .= "<ul class='ranges_list' style='display:none'>\n";
+    foreach my $property ( @{ $lookups->{'value_for'} } ) {
+      $html
+          .= "<li><a href='#"
+          . $property
+          . "' class='iri'>$property</a></li>\n";
+    } ## end foreach my $property ( @{ $lookups...})
+    $html .= "</ul>\n";
+    $html .= "</div>\n";
+
+  } ## end if ( defined $lookups ...)
+
+  $html .= "</div>\n";
+  return $html;
+} ## end sub make_class_block
+
+#===  FUNCTION  ================================================================
+#         NAME:  make_property_block
+#      PURPOSE:  Creates a chunck of html for each property object
+#   PARAMETERS:  $property, $data
+#      RETURNS:  ????
+#  DESCRIPTION:  ????
+#       THROWS:  no exceptions
+#     COMMENTS:  none
+#     SEE ALSO:  n/a
+#===============================================================================
+sub make_property_block {
+  my ( $property, $lookups ) = @_;
+
+  my $html = '';
+  $html .= "<div class='ont_outer_div'>\n";
+  $html
+      .= "<a name='" . $property->{"$rdf:about"} . "' class='target'></a>\n";
+  $html
+      .= "<div class='ont_class_name'><span class='label'>Property:</span> <span class='value'>"
+      . $property->{"$rdf:about"}
+      . "</span></div>\n";
+  $html .= "<table>\n";
+  $html
+      .= "<tr class='label_row'><td rowspan='4' class='overview'>Overivew</td><td class='label'>Label</td><td class='value'>"
+      . $property->{"$rdfs:label"}
+      . "</td></tr>\n";
+  if ( exists $property->{'rdf:about'} ) {
+    $html
+        .= "<tr class='uri_row'><td class='label'>URI</td><td class='value'>"
+        . $property->{"$rdf:about"}
+        . "</td></tr>\n";
+  } ## end if ( exists $property->...)
+  if ( exists $property->{"$rdfs:subClassOf"} ) {
+    $html
+        .= "<tr class='parent_row'><td class='label'>Has Parent Class</td><td class='value'>"
+        . $property->{"$rdfs:subClassOf"}
+        . "</td></tr>\n";
+  } ## end if ( exists $property->...)
+  if ( exists $property->{"$owl:sameAs"} ) {
+    $html
+        .= "<tr class='equivelant_row'><td class='label'>Equivelant to...</td><td class='value'>"
+        . $property->{"$owl:sameAs"}->{"$rdf:resource"}
+        . "</td></tr>\n";
+  } ## end if ( exists $property->...)
+  if ( exists $property->{"$rdfs:range"} ) {
+    $html
+        .= "<tr class='range_row'><td class='label'>Has a value of</td><td class='value'><a href='#"
+        . $property->{"$rdfs:range"}->{"$rdf:resource"}
+        . "' class='iri'>"
+        . $property->{"$rdfs:range"}->{"$rdf:resource"}
+        . "</a></td></tr>\n";
+  } ## end if ( exists $property->...)
+
+  $html .= "</table>\n";
+
+  if ( exists $property->{"$rdfs:comment"} ) {
+    $html
+        .= "<p class='description'>"
+        . $property->{"$rdfs:comment"}
+        . "</p>\n";
+  } ## end if ( exists $property->...)
+  if ( defined $lookups
+    && exists $lookups->{'appears_in'} )
+  {
+    $html
+        .= "<div class='properties'><span class='label scrollable scrolldown'>Property for...</span>\n";
+    $html .= "<ul class='appears_in' style='display:none'>\n";
+    foreach my $property (
+
+#      @{ $data->{properties}->{ $property->{'rdf:about'} }->{'appears_in'} } )
+      @{ $lookups->{'appears_in'} }
+        )
+    {
+      $html
+          .= "<li><a href='#"
+          . $property
+          . "' class='iri'>$property</a></li>\n";
+    } ## end foreach my $property ( @{ $lookups...})
+    $html .= "</ul>\n";
+    $html .= "</div>\n";
+
+  } ## end if ( defined $lookups ...)
+
+  $html .= "</div>\n";
+  return $html;
+} ## end sub make_property_block
+
+#===  FUNCTION  ================================================================
+#         NAME:  get_namespaces
+#      PURPOSE:  Create a hash of namespaces from the <rdf:RDF> element
+#   PARAMETERS:  $xml
+#      RETURNS:  $h_ref
+#  DESCRIPTION:  ????
+#       THROWS:  no exceptions
+#     COMMENTS:  none
+#     SEE ALSO:  n/a
+#===============================================================================
+sub get_namespaces {
+  my $xml = shift;
+
+  my %hash;
+
+  foreach my $ns ( keys %{$xml} ) {
+
+    #----------------------------------------------------------------------
+    #  My switch for perl <5.10.1
+    #----------------------------------------------------------------------
+    for ( $xml->{$ns} ) {
+      m"http://www.w3.org/1999/02/22-rdf-syntax-ns#" && do {
+        $ns =~ /\w+:(\w+)/;
+        if ($1) {
+          $hash{rdf_syntax} = $1;
+        }
+        last;
+      };
+      m"http://www.w3.org/2002/07/owl#" && do {
+        $ns =~ /\w+:(\w+)/;
+        if ($1) {
+          $hash{owl} = $1;
+        }
+        last;
+      };
+      m"http://purl.org/dc/terms/" && do {
+        $ns =~ /\w+:(\w+)/;
+        if ($1) {
+          $hash{dc_terms} = $1;
+        }
+        last;
+      };
+      m"http://purl.org/vocab/vann/" && do {
+        $ns =~ /\w+:(\w+)/;
+        if ($1) {
+          $hash{vann} = $1;
+        }
+        last;
+      };
+      m"http://xmlns.com/foaf/0.1/" && do {
+        $ns =~ /\w+:(\w+)/;
+        if ($1) {
+          $hash{foaf} = $1;
+        }
+        last;
+      };
+      m"http://purl.org/dc/elements/1.1/" && do {
+        $ns =~ /\w+:(\w+)/;
+        if ($1) {
+          $hash{dc_elements} = $1;
+        }
+        last;
+      };
+      m"http://www.w3.org/ns/adms#" && do {
+        $ns =~ /\w+:(\w+)/;
+        if ($1) {
+          $hash{adms} = $1;
+        }
+        last;
+      };
+      m"http://www.w3.org/2000/01/rdf-schema#" && do {
+        $ns =~ /\w+:(\w+)/;
+        if ($1) {
+          $hash{rdf_schema} = $1;
+        }
+        last;
+      };
+      m"http://eprints.org/ontology/" && do {
+        $ns =~ /\w+:(\w+)/;
+        if ($1) {
+          $hash{eprints} = $1;
+        }
+        last;
+      };
+      m"http://www.w3.org/2004/02/skos/core#" && do {
+        $ns =~ /\w+:(\w+)/;
+        if ($1) {
+          $hash{skos} = $1;
+        }
+        last;
+      };
+      m"http://rdfs.org/ns/void#" && do {
+        $ns =~ /\w+:(\w+)/;
+        if ($1) {
+          $hash{void} = $1;
+        }
+        last;
+      };
+      m"http://opendepot.org/reference/linked/1.0/" && do {
+        $ns =~ /\w+:(\w+)/;
+        if ($1) {
+          $hash{oarj} = $1;
+        }
+        last;
+      };
+    } ## end for ( $xml->{$ns} )
+  } ## end foreach my $ns ( keys %{$xml...})
+
+  return \%hash;
+} ## end sub get_namespaces
