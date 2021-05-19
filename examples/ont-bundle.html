@@ -1,0 +1,1126 @@
+<!DOCTYPE html>
+
+<html lang='en-uk'>
+
+  <head>
+
+  <meta charset='utf-8'>
+
+  <title>Open Access Repository Junction Ontology</title>
+  
+<style>
+body {background: #fff; color:#404040; font:76% Verdana,Tahoma,Arial,sans-serif; margin:0 auto; padding:0;}
+a {color:#4088b8; font-weight:700; text-decoration:none;}
+a:hover {text-decoration:underline;}
+a img {border:0;}
+p {margin:0 0 18px 10px;}
+ul,ol,dl {font-size:0.9em; margin:2px 0 16px 35px;}
+ul ul,ol ol {margin:4px 0 4px 35px;}
+blockquote {border:1px solid #dadada; font-size:0.9em; margin:20px 10px; padding:8px;}
+blockquote p {margin:0;}
+
+/* Headers */
+h1 {color:#4088b8; font-size:3.6em; letter-spacing:-3px; margin:0 0 20px 25px;}
+h1 a {color:#4088b8; text-transform:none;}
+h2 {border-bottom:4px solid #dadada; color:#4088b8; font-size:1.4em; letter-spacing:-1px; margin:0 0 10px; padding:0 2px 2px 5px;}
+h3 {border-bottom:1px solid #dadada; color:#4088b8; font-size:1.2em; font-weight:700; margin:10px 0 8px; padding:1px 2px 2px 3px;}
+h4 {border-bottom:1px solid #dadada; color:#4088b8; font-size:1.0em; font-weight:700; margin:10px 0 8px; padding:1px 2px 2px 3px;}
+h5 {border-bottom:1px dotted #dadada; color:#4088b8; font-size:1.0em; font-weight:500; margin:10px 0 8px; padding:1px 2px 2px 3px;}
+/* Main wrap */
+#wrap {color:#404040; margin:10px auto; padding:0; width: 80%/* 970px; */}
+
+.ont_outer_div {border:1px solid #dadada; padding:1em; margin:1em}
+.target {color:#404040;}
+.overview {vertical-align: text-top; width:8em}
+td.label {padding: 0 1em; border-right: 1px solid #dadada;  border-bottom: 1px solid #dadada;}
+td.value {padding: 0 1em; border-bottom: 1px solid #dadada;}
+.ont_class_name {font-size:larger; background:#4088b8; color:#dadada; padding:.25em }
+.uri_row > .value, .equivelant_row > .value, .parent_row > .value {
+  color: #cd5c5c; background:#ffffe0; border: 1px solid #ffa07a; padding:0.1em; margin: 0.1em; padding-left: 1em
+  }
+.scrolldown {
+background-image: url("/test/ontology/img/treeView/dotted/tvile.gif");
+background-repeat: no-repeat;
+padding-left: 20px;  /* width of the image plus a little extra padding */
+display: block;  /* may not need this, but I've found I do */
+}
+.scrollup {background-image: url("/test/ontology/img/treeView/dotted/tvilc.gif");
+background-repeat: no-repeat;
+padding-left: 20px;  /* width of the image plus a little extra padding */
+display: block;  /* may not need this, but I've found I do */
+}
+
+path.arc {
+  cursor: move;
+  fill: #fff;
+}
+
+.node {
+  font-size: 11px;
+}
+
+.node:hover {
+  fill: red !important;
+}
+
+.link {
+  fill: none;
+  stroke: #4169E1;
+  stroke-opacity: .3;
+  pointer-events: none;
+}
+
+.link.source, .link.target {
+  stroke-opacity: 1;
+  stroke-width: 2px;
+}
+
+.node.source {
+  fill: purple !important;
+}
+
+.node.target {
+  fill: teal !important;
+}
+
+.link.source {
+  stroke: teal;
+}
+
+.link.target {
+  stroke: purple;
+}
+</style>
+
+  <script src='http://d3js.org/d3.v3.min.js'></script>
+
+  <script type='text/javascript' src='http://code.jquery.com/jquery-1.9.1.js'></script>
+
+  <script type='text/javascript' src='http://_mbostock.github.com/d3/d3.js?2.6.0'></script>
+
+  <script type='text/javascript' src='http://_mbostock.github.com/d3/d3.layout.js?2.6.0'></script>
+
+  <script type='text/javascript' src='http://_`mbostock.github.com/d3/d3.geom.js?2.6.0'></script>
+
+  <script language='javascript' type='text/javascript'>
+
+    $().ready(function() {
+
+      $('.scrollable').on('click', function(e) {
+
+        $(this).next().slideToggle();
+
+        $(this).toggleClass('scrollup scrolldown')
+
+      });
+
+    });
+
+  </script>
+
+  </head>
+
+  <body>
+<div class='metadata'>
+<h1>Open Access Repository Junction Ontology</h1>
+<h2>Authors</h2>
+<ul id='authors'>
+<li><a href='http://ori.edina.ac.uk/id/manager/004b5b5f3a5860735663207d35a25812' class='creator' title='Link to information about the Author'>Ian Stuart</a></li>
+</ul>
+<h2>Created</h2>
+<p>Created: Unknown</p>
+<p>Last Modified: Unknown</p>
+<h2>Namespace URI</h2>
+<p>
+http://opendepot.org/reference/linked/1.0/</p>
+<h2 class=' scrollable scrollup'>Namespace referenced</h2>
+<ul id='namespaces' ><li>oarj [<a href='http://opendepot.org/reference/linked/1.0/' class='ns_uri' title='Link to the namespace URI'>http://opendepot.org/reference/linked/1.0/</a>]</li>
+<li>skos [<a href='http://www.w3.org/2004/02/skos/core#' class='ns_uri' title='Link to the namespace URI'>http://www.w3.org/2004/02/skos/core#</a>]</li>
+<li>foaf [<a href='http://xmlns.com/foaf/0.1/' class='ns_uri' title='Link to the namespace URI'>http://xmlns.com/foaf/0.1/</a>]</li>
+<li>dc [<a href='http://purl.org/dc/terms/' class='ns_uri' title='Link to the namespace URI'>http://purl.org/dc/terms/</a>]</li>
+<li>void [<a href='http://rdfs.org/ns/void#' class='ns_uri' title='Link to the namespace URI'>http://rdfs.org/ns/void#</a>]</li>
+<li>rdfs [<a href='http://www.w3.org/2000/01/rdf-schema#' class='ns_uri' title='Link to the namespace URI'>http://www.w3.org/2000/01/rdf-schema#</a>]</li>
+<li>org [<a href='http://www.w3.org/ns/org#' class='ns_uri' title='Link to the namespace URI'>http://www.w3.org/ns/org#</a>]</li>
+<li>sioc [<a href='http://rdfs.org/sioc/ns#' class='ns_uri' title='Link to the namespace URI'>http://rdfs.org/sioc/ns#</a>]</li>
+<li>lv [<a href='http://www.lexvo.org/ontology#' class='ns_uri' title='Link to the namespace URI'>http://www.lexvo.org/ontology#</a>]</li>
+<li>dc [<a href='http://purl.org/dc/elements/1.1/#' class='ns_uri' title='Link to the namespace URI'>http://purl.org/dc/elements/1.1/#</a>]</li>
+<li>geo [<a href='http://www.w3.org/2003/01/geo/wgs84_pos#' class='ns_uri' title='Link to the namespace URI'>http://www.w3.org/2003/01/geo/wgs84_pos#</a>]</li>
+<li>gn [<a href='http://www.geonames.org/ontology#' class='ns_uri' title='Link to the namespace URI'>http://www.geonames.org/ontology#</a>]</li>
+<li>v [<a href='http://www.w3.org/2006/vcard/ns#' class='ns_uri' title='Link to the namespace URI'>http://www.w3.org/2006/vcard/ns#</a>]</li>
+<li>place [<a href='http://purl.org/ontology/places#' class='ns_uri' title='Link to the namespace URI'>http://purl.org/ontology/places#</a>]</li>
+</ul>
+<h2>Abstract</h2>
+<p>Describes the main classes and properties which the Open Access Repository Junction data set adds to adds to FOAF, DC, SIOC, etc. and some notes on the patterns this data will take.</p>
+</div>
+<h2>Relationship map</h2>
+<p>Hover over the name of a node.<br />
+<span style='color: purple'>Purple</span> lines indicate the node is a value for something <br />
+<span style='color: teal'>Teal</span> lines indicate the node has a value of something<br />
+(eg: <code>Has URL</code> is a property for <code>Organisation</code> & <code>Repository</code>, and its content is a <code>URL</code> object)<br />
+The nodes at the end of the lines should also change color, matching the lines.</p>
+<div id='map'>
+<script type="text/javascript" charset="utf-8">
+  
+  /*
+    This is the array of nodes
+    Each node is bodged to have heirarchy, because that groups things together
+      (Classes with Classes, Properties with Proeprties)
+    Each node has a name (with spaces replaced by the utf-8 "non-breaking
+      space" character) and a list of 0+ "imports" (Classes import Properties
+      and Properties may import Classes [when the value of that Property is
+      defined as being a Class object)
+      (eg: "Has URL" is a property for "Organisation" & "Repository", and its
+      content is a "URL" Class object)
+  */
+  var classes = [
+  { "name" : "rjb.property.Is\u00A0of\u00A0Repository\u00A0Type", "imports" : ["rjb.class.Repository\u00A0Type"]},
+{ "name" : "rjb.class.Repository", "imports" : ["rjb.property.Description", "rjb.property.Comment", "rjb.property.Software\u00A0Name", "rjb.property.Software\u00A0Version", "rjb.property.OAI-PMH\u00A0URL", "rjb.property.SWORD\u00A0Endpoint", "rjb.property.Identifier", "rjb.property.Acronym", "rjb.property.NamePreferred", "rjb.property.Has\u00A0URL", "rjb.property.Accepts\u00A0Content\u00A0Type", "rjb.property.Is\u00A0of\u00A0Repository\u00A0Type", "rjb.property.Title", "rjb.property.Geonames\u00A0Alternative\u00A0Name", "rjb.property.FOAF\u00A0Homepage", "rjb.property.Geo\u00A0Latitude", "rjb.property.Geo\u00A0Longitude", "rjb.property.Country\u00A0Code", "rjb.property.ORG\u00A0SubOrganizationOf", "rjb.property.See\u00A0Also", "rjb.property.ISO\u00A0639-1\u00A0code", "rjb.property.Has\u00A0Administrator"]},
+{ "name" : "rjb.property.Geo\u00A0Latitude", "imports" : []},
+{ "name" : "rjb.property.Acronym", "imports" : []},
+{ "name" : "rjb.property.See\u00A0Also", "imports" : []},
+{ "name" : "rjb.property.VCard\u00A0Email", "imports" : []},
+{ "name" : "rjb.property.VCard\u00A0Tel", "imports" : []},
+{ "name" : "rjb.property.SIOC\u00A0Administrator\u00A0Of", "imports" : ["rjb.class.Repository"]},
+{ "name" : "rjb.property.Geonames\u00A0Alternative\u00A0Name", "imports" : []},
+{ "name" : "rjb.class.Repository\u00A0Type", "imports" : ["rjb.property.Title"]},
+{ "name" : "rjb.property.SWORD\u00A0Endpoint", "imports" : []},
+{ "name" : "rjb.property.Geo\u00A0Longitude", "imports" : []},
+{ "name" : "rjb.property.Has\u00A0Administrator", "imports" : ["rjb.class.Manager"]},
+{ "name" : "rjb.class.Manager", "imports" : ["rjb.property.SIOC\u00A0Administrator\u00A0Of", "rjb.property.VCard\u00A0Role", "rjb.property.VCard\u00A0Email", "rjb.property.VCard\u00A0Tel"]},
+{ "name" : "rjb.property.Country\u00A0Code", "imports" : []},
+{ "name" : "rjb.property.Has\u00A0URL", "imports" : ["rjb.class.URL"]},
+{ "name" : "rjb.property.VCard\u00A0Role", "imports" : []},
+{ "name" : "rjb.property.Accepts\u00A0Content\u00A0Type", "imports" : ["rjb.class.Repository\u00A0Content\u00A0Type"]},
+{ "name" : "rjb.class.URL", "imports" : ["rjb.property.Has\u00A0Organisation", "rjb.property.Url", "rjb.property.Date\u00A0Checked", "rjb.property.Alive"]},
+{ "name" : "rjb.property.NamePreferred", "imports" : []},
+{ "name" : "rjb.property.Software\u00A0Name", "imports" : []},
+{ "name" : "rjb.property.Has\u00A0Organisation", "imports" : ["rjb.class.Organisation"]},
+{ "name" : "rjb.property.Software\u00A0Version", "imports" : []},
+{ "name" : "rjb.property.FOAF\u00A0Homepage", "imports" : []},
+{ "name" : "rjb.class.http://rdfs.org/ns/void#Dataset", "imports" : ["rjb.property.Identifier"]},
+{ "name" : "rjb.property.Title", "imports" : []},
+{ "name" : "rjb.property.Geonames\u00A0Name", "imports" : []},
+{ "name" : "rjb.class.Repository\u00A0Content\u00A0Type", "imports" : ["rjb.property.Title"]},
+{ "name" : "rjb.property.Alive", "imports" : []},
+{ "name" : "rjb.property.Date\u00A0Checked", "imports" : []},
+{ "name" : "rjb.property.ORG\u00A0SubOrganizationOf", "imports" : ["rjb.class.Organisation"]},
+{ "name" : "rjb.property.Has\u00A0Network", "imports" : ["rjb.class.Network\u00A0Allocation"]},
+{ "name" : "rjb.property.Identifier", "imports" : []},
+{ "name" : "rjb.property.OAI-PMH\u00A0URL", "imports" : []},
+{ "name" : "rjb.property.Url", "imports" : []},
+{ "name" : "rjb.property.ISO\u00A0639-1\u00A0code", "imports" : []},
+{ "name" : "rjb.class.Network\u00A0Allocation", "imports" : ["rjb.property.IP\u00A0Range", "rjb.property.Identifier", "rjb.property.Has\u00A0Organisation", "rjb.property.Title", "rjb.property.Geonames\u00A0Alternative\u00A0Name"]},
+{ "name" : "rjb.property.Description", "imports" : []},
+{ "name" : "rjb.property.Has\u00A0Repository", "imports" : ["rjb.class.Repository"]},
+{ "name" : "rjb.property.Comment", "imports" : []},
+{ "name" : "rjb.class.Organisation", "imports" : ["rjb.property.Identifier", "rjb.property.Acronym", "rjb.property.NamePreferred", "rjb.property.Has\u00A0Network", "rjb.property.Has\u00A0URL", "rjb.property.Has\u00A0Repository", "rjb.property.Geonames\u00A0Name", "rjb.property.Geonames\u00A0Alternative\u00A0Name", "rjb.property.FOAF\u00A0Homepage", "rjb.property.Geo\u00A0Latitude", "rjb.property.Geo\u00A0Longitude", "rjb.property.Country\u00A0Code", "rjb.property.ORG\u00A0SubOrganizationOf", "rjb.property.City"]},
+{ "name" : "rjb.property.IP\u00A0Range", "imports" : []},
+{ "name" : "rjb.property.City", "imports" : []}
+]
+
+
+
+/*
+  This needs to be early, so its defined when later code needs
+  to call it
+*/
+
+var packages = {
+
+  // Lazily construct the package hierarchy from class names.
+  root: function(classes) {
+    var map = {};
+
+    function find(name, data) {
+      var node = map[name], i;
+      if (!node) {
+        node = map[name] = data || {name: name, children: []};
+        if (name.length) {
+          node.parent = find(name.substring(0, i = name.lastIndexOf(".")));
+          node.parent.children.push(node);
+          node.key = name.substring(i + 1);
+        }
+      }
+      return node;
+    }
+
+    classes.forEach(function(d) {
+      find(d.name, d);
+    });
+    return map[""];
+  },
+
+  // Return a list of imports for the given array of nodes.
+  imports: function(nodes) {
+    var map = {},
+        imports = [];
+
+    // Compute a map from name to node.
+    nodes.forEach(function(d) {
+      map[d.name] = d;
+    });
+
+    // For each import, construct a link from the source to target node.
+    nodes.forEach(function(d) {
+      if (d.imports) d.imports.forEach(function(i) {
+        imports.push({source: map[d.name], target: map[i]});
+      });
+    });
+
+    return imports;
+  }
+};
+
+var w = 720,
+    h = 540,
+    rx = w / 2,
+    ry = h / 2,
+    m0,
+    rotate = 0;
+
+var splines = [];
+
+var cluster = d3.layout.cluster()
+    .size([360, ry - 120])
+    .sort(function(a, b) { return d3.ascending(a.key, b.key); });
+
+var bundle = d3.layout.bundle();
+
+var line = d3.svg.line.radial()
+    .interpolate("bundle")
+    .tension(.65)
+    .radius(function(d) { return d.y; })
+    .angle(function(d) { return d.x / 180 * Math.PI; });
+
+// Add an "svg" object to the page "dom"
+// This is what D3 adds its charts to!!
+var diva =  d3.select("#map");
+var div = diva.insert("div")
+    .style("width", w + "px")
+    .style("height", w + "px")
+    .style("-webkit-backface-visibility", "hidden");
+
+var svg = div.append("svg")
+    .attr("width", w)
+    .attr("height", h)
+  .append("g")
+    .attr("transform", "translate(" + rx + "," + ry + ")");
+
+
+d3.select(window)
+    .on("mousemove", mousemove)
+    .on("mouseup", mouseup);
+
+
+function mouse(e) {
+  return [e.pageX - rx, e.pageY - ry];
+}
+
+function mousedown() {
+  m0 = mouse(d3.event);
+  d3.event.preventDefault();
+}
+
+function mousemove() {
+  if (m0) {
+    var m1 = mouse(d3.event),
+        dm = Math.atan2(cross(m0, m1), dot(m0, m1)) * 180 / Math.PI;
+    div.style("-webkit-transform", "translateY(" + (ry - rx) + "px)rotateZ(" + dm + "deg)translateY(" + (rx - ry) + "px)");
+  }
+}
+
+function mouseup() {
+  if (m0) {
+    var m1 = mouse(d3.event),
+        dm = Math.atan2(cross(m0, m1), dot(m0, m1)) * 180 / Math.PI;
+
+    rotate += dm;
+    if (rotate > 360) rotate -= 360;
+    else if (rotate < 0) rotate += 360;
+    m0 = null;
+
+    div.style("-webkit-transform", null);
+
+    svg
+        .attr("transform", "translate(" + rx + "," + ry + ")rotate(" + rotate + ")")
+      .selectAll("g.node text")
+        .attr("dx", function(d) { return (d.x + rotate) % 360 < 180 ? 8 : -8; })
+        .attr("text-anchor", function(d) { return (d.x + rotate) % 360 < 180 ? "start" : "end"; })
+        .attr("transform", function(d) { return (d.x + rotate) % 360 < 180 ? null : "rotate(180)"; });
+  }
+}
+
+function mouseover(d) {
+  svg.selectAll("path.link.target-" + d.key)
+      .classed("target", true)
+      .each(updateNodes("source", true));
+
+  svg.selectAll("path.link.source-" + d.key)
+      .classed("source", true)
+      .each(updateNodes("target", true));
+}
+
+function mouseout(d) {
+  svg.selectAll("path.link.source-" + d.key)
+      .classed("source", false)
+      .each(updateNodes("target", false));
+
+  svg.selectAll("path.link.target-" + d.key)
+      .classed("target", false)
+      .each(updateNodes("source", false));
+}
+
+function updateNodes(name, value) {
+  return function(d) {
+    if (value) this.parentNode.appendChild(this);
+    svg.select("#node-" + d[name].key).classed(name, value);
+  };
+}
+
+function cross(a, b) {
+  return a[0] * b[1] - a[1] * b[0];
+}
+
+function dot(a, b) {
+  return a[0] * b[0] + a[1] * b[1];
+}
+  
+
+svg.append("svg:path")
+    .attr("class", "arc")
+    .attr("d", d3.svg.arc().outerRadius(ry - 120).innerRadius(0).startAngle(0).endAngle(2 * Math.PI))
+    .on("mousedown", mousedown);
+
+  var nodes = cluster.nodes(packages.root(classes)),
+      links = packages.imports(nodes),
+      splines = bundle(links);
+
+  var path = svg.selectAll("path.link")
+      .data(links)
+    .enter().append("svg:path")
+      .attr("class", function(d) { return "link source-" + d.source.key + " target-" + d.target.key; })
+      .attr("d", function(d, i) { return line(splines[i]); });
+
+  svg.selectAll("g.node")
+      .data(nodes.filter(function(n) { return !n.children; }))
+    .enter().append("svg:g")
+      .attr("class", "node")
+      .attr("id", function(d) { return "node-" + d.key; })
+      .attr("transform", function(d) { return "rotate(" + (d.x - 90) + ")translate(" + d.y + ")"; })
+    .append("svg:text")
+      .attr("dx", function(d) { return d.x < 180 ? 8 : -8; })
+      .attr("dy", ".31em")
+      .attr("text-anchor", function(d) { return d.x < 180 ? "start" : "end"; })
+      .attr("transform", function(d) { return d.x < 180 ? null : "rotate(180)"; })
+      .text(function(d) { return d.key; })
+      .on("mouseover", mouseover)
+      .on("mouseout", mouseout);
+
+
+    </script>
+</div>
+<h2>Classes</h2>
+<div class='ont_outer_div'>
+<a name='http://opendepot.org/reference/linked/1.0/Agent' class='target'></a>
+<div class='ont_class_name'><span class='label'>Class:</span> <span class='value'>http://opendepot.org/reference/linked/1.0/Agent</span></div>
+<table>
+<tr class='label_row'><td rowspan='4' class='overview'>Overivew</td><td class='label'>Label</td><td class='value'>Manager</td></tr>
+<tr class='uri_row'><td class='label'>URI</td><td class='value'>http://opendepot.org/reference/linked/1.0/Agent</td></tr>
+<tr class='parent_row'><td class='label'>Subclassed from...</td><td class='value'>http://xmlns.com/foaf/0.1/Agent</td></tr>
+</table>
+<p class='description'>The manager of a repository. This include some, all, or none of a named person, a job title, or just an email address. Note that these IRIs are opaque, as Names, job Titles, and/or email addresses are known to be shared across multiple manager roles.</p>
+<div class='properties'><span class='label scrollable scrolldown'>Properties</span>
+<ul class='properties_list' style='display:none'>
+<li><a href='#http://rdfs.org/sioc/ns#administrator_of' class='iri'>http://rdfs.org/sioc/ns#administrator_of</a></li>
+<li><a href='#http://www.w3.org/2006/vcard/ns#role' class='iri'>http://www.w3.org/2006/vcard/ns#role</a></li>
+<li><a href='#http://www.w3.org/2006/vcard/ns#email' class='iri'>http://www.w3.org/2006/vcard/ns#email</a></li>
+<li><a href='#http://www.w3.org/2006/vcard/ns#tel' class='iri'>http://www.w3.org/2006/vcard/ns#tel</a></li>
+</ul>
+</div>
+<div class='ranges'><span class='label scrollable scrolldown'>Is a value for</span>
+<ul class='ranges_list' style='display:none'>
+<li><a href='#http://rdfs.org/sioc/ns#has_administrator' class='iri'>http://rdfs.org/sioc/ns#has_administrator</a></li>
+</ul>
+</div>
+</div>
+<div class='ont_outer_div'>
+<a name='http://opendepot.org/reference/linked/1.0/Network' class='target'></a>
+<div class='ont_class_name'><span class='label'>Class:</span> <span class='value'>http://opendepot.org/reference/linked/1.0/Network</span></div>
+<table>
+<tr class='label_row'><td rowspan='4' class='overview'>Overivew</td><td class='label'>Label</td><td class='value'>Network Allocation</td></tr>
+<tr class='uri_row'><td class='label'>URI</td><td class='value'>http://opendepot.org/reference/linked/1.0/Network</td></tr>
+</table>
+<p class='description'>A network allocation in IPv4 land. The range is defined from a lower quad to an upper quad (eg 4.3.2.0 to 4.3.255.255).</p>
+<div class='properties'><span class='label scrollable scrolldown'>Properties</span>
+<ul class='properties_list' style='display:none'>
+<li><a href='#http://opendepot.org/reference/linked/1.0/ipRange' class='iri'>http://opendepot.org/reference/linked/1.0/ipRange</a></li>
+<li><a href='#http://opendepot.org/reference/linked/1.0/identifier' class='iri'>http://opendepot.org/reference/linked/1.0/identifier</a></li>
+<li><a href='#http://opendepot.org/reference/linked/1.0/hasOrganisation' class='iri'>http://opendepot.org/reference/linked/1.0/hasOrganisation</a></li>
+<li><a href='#http://purl.org/dc/terms/title' class='iri'>http://purl.org/dc/terms/title</a></li>
+<li><a href='#http://www.geonames.org/ontology#alternateName' class='iri'>http://www.geonames.org/ontology#alternateName</a></li>
+</ul>
+</div>
+<div class='ranges'><span class='label scrollable scrolldown'>Is a value for</span>
+<ul class='ranges_list' style='display:none'>
+<li><a href='#http://opendepot.org/reference/linked/1.0/hasNetwork' class='iri'>http://opendepot.org/reference/linked/1.0/hasNetwork</a></li>
+</ul>
+</div>
+</div>
+<div class='ont_outer_div'>
+<a name='http://opendepot.org/reference/linked/1.0/Organisation' class='target'></a>
+<div class='ont_class_name'><span class='label'>Class:</span> <span class='value'>http://opendepot.org/reference/linked/1.0/Organisation</span></div>
+<table>
+<tr class='label_row'><td rowspan='4' class='overview'>Overivew</td><td class='label'>Label</td><td class='value'>Organisation</td></tr>
+<tr class='uri_row'><td class='label'>URI</td><td class='value'>http://opendepot.org/reference/linked/1.0/Organisation</td></tr>
+<tr class='parent_row'><td class='label'>Subclassed from...</td><td class='value'>http://xmlns.com/foaf/0.1/Organisation</td></tr>
+</table>
+<p class='description'>An organisation, be it a physical place like a University, a sub-unit like a department, or a virtual concept like the International Conferences on Electronic Publishing.</p>
+<div class='properties'><span class='label scrollable scrolldown'>Properties</span>
+<ul class='properties_list' style='display:none'>
+<li><a href='#http://opendepot.org/reference/linked/1.0/identifier' class='iri'>http://opendepot.org/reference/linked/1.0/identifier</a></li>
+<li><a href='#http://opendepot.org/reference/linked/1.0/acronym' class='iri'>http://opendepot.org/reference/linked/1.0/acronym</a></li>
+<li><a href='#http://opendepot.org/reference/linked/1.0/namepreferred' class='iri'>http://opendepot.org/reference/linked/1.0/namepreferred</a></li>
+<li><a href='#http://opendepot.org/reference/linked/1.0/hasNetwork' class='iri'>http://opendepot.org/reference/linked/1.0/hasNetwork</a></li>
+<li><a href='#http://opendepot.org/reference/linked/1.0/hasURL' class='iri'>http://opendepot.org/reference/linked/1.0/hasURL</a></li>
+<li><a href='#http://opendepot.org/reference/linked/1.0/hasRepository' class='iri'>http://opendepot.org/reference/linked/1.0/hasRepository</a></li>
+<li><a href='#http://www.geonames.org/ontology#name' class='iri'>http://www.geonames.org/ontology#name</a></li>
+<li><a href='#http://www.geonames.org/ontology#alternateName' class='iri'>http://www.geonames.org/ontology#alternateName</a></li>
+<li><a href='#http://xmlns.com/foaf/0.1/homepage' class='iri'>http://xmlns.com/foaf/0.1/homepage</a></li>
+<li><a href='#http://www.w3.org/2003/01/geo/wgs84_pos#lat' class='iri'>http://www.w3.org/2003/01/geo/wgs84_pos#lat</a></li>
+<li><a href='#http://www.w3.org/2003/01/geo/wgs84_pos#long' class='iri'>http://www.w3.org/2003/01/geo/wgs84_pos#long</a></li>
+<li><a href='#http://www.w3.org/2003/01/geo/wgs84_pos#countyCode' class='iri'>http://www.w3.org/2003/01/geo/wgs84_pos#countyCode</a></li>
+<li><a href='#http://www.w3.org/ns/org#subOrgansationOf' class='iri'>http://www.w3.org/ns/org#subOrgansationOf</a></li>
+<li><a href='#http://purl.org/ontology/places#City' class='iri'>http://purl.org/ontology/places#City</a></li>
+</ul>
+</div>
+<div class='ranges'><span class='label scrollable scrolldown'>Is a value for</span>
+<ul class='ranges_list' style='display:none'>
+<li><a href='#http://opendepot.org/reference/linked/1.0/hasOrganisation' class='iri'>http://opendepot.org/reference/linked/1.0/hasOrganisation</a></li>
+<li><a href='#http://www.w3.org/ns/org#subOrgansationOf' class='iri'>http://www.w3.org/ns/org#subOrgansationOf</a></li>
+</ul>
+</div>
+</div>
+<div class='ont_outer_div'>
+<a name='http://opendepot.org/reference/linked/1.0/Repository' class='target'></a>
+<div class='ont_class_name'><span class='label'>Class:</span> <span class='value'>http://opendepot.org/reference/linked/1.0/Repository</span></div>
+<table>
+<tr class='label_row'><td rowspan='4' class='overview'>Overivew</td><td class='label'>Label</td><td class='value'>Repository</td></tr>
+<tr class='uri_row'><td class='label'>URI</td><td class='value'>http://opendepot.org/reference/linked/1.0/Repository</td></tr>
+<tr class='parent_row'><td class='label'>Subclassed from...</td><td class='value'>http://rdfs.org/sioc/ns#Site</td></tr>
+<tr class='equivelant_row'><td class='label'>Equivelant to...</td><td class='value'>http://xmlns.com/foaf/0.1/Site</td></tr>
+</table>
+<p class='description'>A repository.</p>
+<div class='properties'><span class='label scrollable scrolldown'>Properties</span>
+<ul class='properties_list' style='display:none'>
+<li><a href='#http://opendepot.org/reference/linked/1.0/description' class='iri'>http://opendepot.org/reference/linked/1.0/description</a></li>
+<li><a href='#http://opendepot.org/reference/linked/1.0/comment' class='iri'>http://opendepot.org/reference/linked/1.0/comment</a></li>
+<li><a href='#http://opendepot.org/reference/linked/1.0/softwareName' class='iri'>http://opendepot.org/reference/linked/1.0/softwareName</a></li>
+<li><a href='#http://opendepot.org/reference/linked/1.0/softwareVersion' class='iri'>http://opendepot.org/reference/linked/1.0/softwareVersion</a></li>
+<li><a href='#http://opendepot.org/reference/linked/1.0/oaiBaseUrl' class='iri'>http://opendepot.org/reference/linked/1.0/oaiBaseUrl</a></li>
+<li><a href='#http://opendepot.org/reference/linked/1.0/swordEndpoint' class='iri'>http://opendepot.org/reference/linked/1.0/swordEndpoint</a></li>
+<li><a href='#http://opendepot.org/reference/linked/1.0/identifier' class='iri'>http://opendepot.org/reference/linked/1.0/identifier</a></li>
+<li><a href='#http://opendepot.org/reference/linked/1.0/acronym' class='iri'>http://opendepot.org/reference/linked/1.0/acronym</a></li>
+<li><a href='#http://opendepot.org/reference/linked/1.0/namepreferred' class='iri'>http://opendepot.org/reference/linked/1.0/namepreferred</a></li>
+<li><a href='#http://opendepot.org/reference/linked/1.0/hasURL' class='iri'>http://opendepot.org/reference/linked/1.0/hasURL</a></li>
+<li><a href='#http://opendepot.org/reference/linked/1.0/acceptsContentType' class='iri'>http://opendepot.org/reference/linked/1.0/acceptsContentType</a></li>
+<li><a href='#http://opendepot.org/reference/linked/1.0/isRepositoryType' class='iri'>http://opendepot.org/reference/linked/1.0/isRepositoryType</a></li>
+<li><a href='#http://purl.org/dc/terms/title' class='iri'>http://purl.org/dc/terms/title</a></li>
+<li><a href='#http://www.geonames.org/ontology#alternateName' class='iri'>http://www.geonames.org/ontology#alternateName</a></li>
+<li><a href='#http://xmlns.com/foaf/0.1/homepage' class='iri'>http://xmlns.com/foaf/0.1/homepage</a></li>
+<li><a href='#http://www.w3.org/2003/01/geo/wgs84_pos#lat' class='iri'>http://www.w3.org/2003/01/geo/wgs84_pos#lat</a></li>
+<li><a href='#http://www.w3.org/2003/01/geo/wgs84_pos#long' class='iri'>http://www.w3.org/2003/01/geo/wgs84_pos#long</a></li>
+<li><a href='#http://www.w3.org/2003/01/geo/wgs84_pos#countyCode' class='iri'>http://www.w3.org/2003/01/geo/wgs84_pos#countyCode</a></li>
+<li><a href='#http://www.w3.org/ns/org#subOrgansationOf' class='iri'>http://www.w3.org/ns/org#subOrgansationOf</a></li>
+<li><a href='#http://www.w3.org/2000/01/rdf-schema#seeAlso' class='iri'>http://www.w3.org/2000/01/rdf-schema#seeAlso</a></li>
+<li><a href='#http://www.lexvo.org/ontology#iso639P1Code' class='iri'>http://www.lexvo.org/ontology#iso639P1Code</a></li>
+<li><a href='#http://rdfs.org/sioc/ns#has_administrator' class='iri'>http://rdfs.org/sioc/ns#has_administrator</a></li>
+</ul>
+</div>
+<div class='ranges'><span class='label scrollable scrolldown'>Is a value for</span>
+<ul class='ranges_list' style='display:none'>
+<li><a href='#http://opendepot.org/reference/linked/1.0/hasRepository' class='iri'>http://opendepot.org/reference/linked/1.0/hasRepository</a></li>
+<li><a href='#http://rdfs.org/sioc/ns#administrator_of' class='iri'>http://rdfs.org/sioc/ns#administrator_of</a></li>
+</ul>
+</div>
+</div>
+<div class='ont_outer_div'>
+<a name='http://opendepot.org/reference/linked/1.0/RepositoryContentType' class='target'></a>
+<div class='ont_class_name'><span class='label'>Class:</span> <span class='value'>http://opendepot.org/reference/linked/1.0/RepositoryContentType</span></div>
+<table>
+<tr class='label_row'><td rowspan='4' class='overview'>Overivew</td><td class='label'>Label</td><td class='value'>Repository Content Type</td></tr>
+<tr class='uri_row'><td class='label'>URI</td><td class='value'>http://opendepot.org/reference/linked/1.0/RepositoryContentType</td></tr>
+</table>
+<p class='description'>The type of content the repository accepts: learning objects, video, books, articles, etc...</p>
+<div class='properties'><span class='label scrollable scrolldown'>Properties</span>
+<ul class='properties_list' style='display:none'>
+<li><a href='#http://purl.org/dc/terms/title' class='iri'>http://purl.org/dc/terms/title</a></li>
+</ul>
+</div>
+<div class='ranges'><span class='label scrollable scrolldown'>Is a value for</span>
+<ul class='ranges_list' style='display:none'>
+<li><a href='#http://opendepot.org/reference/linked/1.0/acceptsContentType' class='iri'>http://opendepot.org/reference/linked/1.0/acceptsContentType</a></li>
+</ul>
+</div>
+</div>
+<div class='ont_outer_div'>
+<a name='http://opendepot.org/reference/linked/1.0/RepositoryType' class='target'></a>
+<div class='ont_class_name'><span class='label'>Class:</span> <span class='value'>http://opendepot.org/reference/linked/1.0/RepositoryType</span></div>
+<table>
+<tr class='label_row'><td rowspan='4' class='overview'>Overivew</td><td class='label'>Label</td><td class='value'>Repository Type</td></tr>
+<tr class='uri_row'><td class='label'>URI</td><td class='value'>http://opendepot.org/reference/linked/1.0/RepositoryType</td></tr>
+</table>
+<p class='description'>The type of repository: Learning, Data, Multimedia, Institutional, Subject, etc...</p>
+<div class='properties'><span class='label scrollable scrolldown'>Properties</span>
+<ul class='properties_list' style='display:none'>
+<li><a href='#http://purl.org/dc/terms/title' class='iri'>http://purl.org/dc/terms/title</a></li>
+</ul>
+</div>
+<div class='ranges'><span class='label scrollable scrolldown'>Is a value for</span>
+<ul class='ranges_list' style='display:none'>
+<li><a href='#http://opendepot.org/reference/linked/1.0/isRepositoryType' class='iri'>http://opendepot.org/reference/linked/1.0/isRepositoryType</a></li>
+</ul>
+</div>
+</div>
+<div class='ont_outer_div'>
+<a name='http://opendepot.org/reference/linked/1.0/Url' class='target'></a>
+<div class='ont_class_name'><span class='label'>Class:</span> <span class='value'>http://opendepot.org/reference/linked/1.0/Url</span></div>
+<table>
+<tr class='label_row'><td rowspan='4' class='overview'>Overivew</td><td class='label'>Label</td><td class='value'>URL</td></tr>
+<tr class='uri_row'><td class='label'>URI</td><td class='value'>http://opendepot.org/reference/linked/1.0/Url</td></tr>
+</table>
+<p class='description'>Uniform Resource Location. Also includes details about the URL (what it belongs to, it's "alive-ness".) NOTE: The IRIs for URLs are opaque.</p>
+<div class='properties'><span class='label scrollable scrolldown'>Properties</span>
+<ul class='properties_list' style='display:none'>
+<li><a href='#http://opendepot.org/reference/linked/1.0/hasOrganisation' class='iri'>http://opendepot.org/reference/linked/1.0/hasOrganisation</a></li>
+<li><a href='#http://opendepot.org/reference/linked/1.0/url' class='iri'>http://opendepot.org/reference/linked/1.0/url</a></li>
+<li><a href='#http://opendepot.org/reference/linked/1.0/dateChecked' class='iri'>http://opendepot.org/reference/linked/1.0/dateChecked</a></li>
+<li><a href='#http://opendepot.org/reference/linked/1.0/good' class='iri'>http://opendepot.org/reference/linked/1.0/good</a></li>
+</ul>
+</div>
+<div class='ranges'><span class='label scrollable scrolldown'>Is a value for</span>
+<ul class='ranges_list' style='display:none'>
+<li><a href='#http://opendepot.org/reference/linked/1.0/hasURL' class='iri'>http://opendepot.org/reference/linked/1.0/hasURL</a></li>
+</ul>
+</div>
+</div>
+<h2>Properties</h2>
+<div class='ont_outer_div'>
+<a name='http://opendepot.org/reference/linked/1.0/acceptsContentType' class='target'></a>
+<div class='ont_class_name'><span class='label'>Property:</span> <span class='value'>http://opendepot.org/reference/linked/1.0/acceptsContentType</span></div>
+<table>
+<tr class='label_row'><td rowspan='4' class='overview'>Overivew</td><td class='label'>Label</td><td class='value'>Accepts Content Type</td></tr>
+<tr class='uri_row'><td class='label'>URI</td><td class='value'>http://opendepot.org/reference/linked/1.0/acceptsContentType</td></tr>
+<tr class='range_row'><td class='label'>Has a value of</td><td class='value'><a href='#http://opendepot.org/reference/linked/1.0/RepositoryContentType' class='iri'>http://opendepot.org/reference/linked/1.0/RepositoryContentType</a></td></tr>
+</table>
+<p class='description'>Repositories accept a variety of content types. The IRI defines the oarj:RepositoryContentType this repository accespts</p>
+<div class='properties'><span class='label scrollable scrolldown'>Property for...</span>
+<ul class='appears_in' style='display:none'>
+<li><a href='#http://opendepot.org/reference/linked/1.0/Repository' class='iri'>http://opendepot.org/reference/linked/1.0/Repository</a></li>
+</ul>
+</div>
+</div>
+<div class='ont_outer_div'>
+<a name='http://opendepot.org/reference/linked/1.0/acronym' class='target'></a>
+<div class='ont_class_name'><span class='label'>Property:</span> <span class='value'>http://opendepot.org/reference/linked/1.0/acronym</span></div>
+<table>
+<tr class='label_row'><td rowspan='4' class='overview'>Overivew</td><td class='label'>Label</td><td class='value'>Acronym</td></tr>
+<tr class='uri_row'><td class='label'>URI</td><td class='value'>http://opendepot.org/reference/linked/1.0/acronym</td></tr>
+</table>
+<p class='description'>The Acronym for the site or organisation</p>
+<div class='properties'><span class='label scrollable scrolldown'>Property for...</span>
+<ul class='appears_in' style='display:none'>
+<li><a href='#http://opendepot.org/reference/linked/1.0/Organisation' class='iri'>http://opendepot.org/reference/linked/1.0/Organisation</a></li>
+<li><a href='#http://opendepot.org/reference/linked/1.0/Repository' class='iri'>http://opendepot.org/reference/linked/1.0/Repository</a></li>
+</ul>
+</div>
+</div>
+<div class='ont_outer_div'>
+<a name='http://opendepot.org/reference/linked/1.0/good' class='target'></a>
+<div class='ont_class_name'><span class='label'>Property:</span> <span class='value'>http://opendepot.org/reference/linked/1.0/good</span></div>
+<table>
+<tr class='label_row'><td rowspan='4' class='overview'>Overivew</td><td class='label'>Label</td><td class='value'>Alive</td></tr>
+<tr class='uri_row'><td class='label'>URI</td><td class='value'>http://opendepot.org/reference/linked/1.0/good</td></tr>
+</table>
+<p class='description'>True/False flag indicating if the URL loaded on the date given</p>
+<div class='properties'><span class='label scrollable scrolldown'>Property for...</span>
+<ul class='appears_in' style='display:none'>
+<li><a href='#http://opendepot.org/reference/linked/1.0/Url' class='iri'>http://opendepot.org/reference/linked/1.0/Url</a></li>
+</ul>
+</div>
+</div>
+<div class='ont_outer_div'>
+<a name='http://purl.org/ontology/places#City' class='target'></a>
+<div class='ont_class_name'><span class='label'>Property:</span> <span class='value'>http://purl.org/ontology/places#City</span></div>
+<table>
+<tr class='label_row'><td rowspan='4' class='overview'>Overivew</td><td class='label'>Label</td><td class='value'>City</td></tr>
+<tr class='uri_row'><td class='label'>URI</td><td class='value'>http://purl.org/ontology/places#City</td></tr>
+</table>
+<p class='description'>The settlement the thing is located.</p>
+<div class='properties'><span class='label scrollable scrolldown'>Property for...</span>
+<ul class='appears_in' style='display:none'>
+<li><a href='#http://opendepot.org/reference/linked/1.0/Organisation' class='iri'>http://opendepot.org/reference/linked/1.0/Organisation</a></li>
+</ul>
+</div>
+</div>
+<div class='ont_outer_div'>
+<a name='http://opendepot.org/reference/linked/1.0/comment' class='target'></a>
+<div class='ont_class_name'><span class='label'>Property:</span> <span class='value'>http://opendepot.org/reference/linked/1.0/comment</span></div>
+<table>
+<tr class='label_row'><td rowspan='4' class='overview'>Overivew</td><td class='label'>Label</td><td class='value'>Comment</td></tr>
+<tr class='uri_row'><td class='label'>URI</td><td class='value'>http://opendepot.org/reference/linked/1.0/comment</td></tr>
+</table>
+<p class='description'>Further commentry on the repository</p>
+<div class='properties'><span class='label scrollable scrolldown'>Property for...</span>
+<ul class='appears_in' style='display:none'>
+<li><a href='#http://opendepot.org/reference/linked/1.0/Repository' class='iri'>http://opendepot.org/reference/linked/1.0/Repository</a></li>
+</ul>
+</div>
+</div>
+<div class='ont_outer_div'>
+<a name='http://www.w3.org/2003/01/geo/wgs84_pos#countyCode' class='target'></a>
+<div class='ont_class_name'><span class='label'>Property:</span> <span class='value'>http://www.w3.org/2003/01/geo/wgs84_pos#countyCode</span></div>
+<table>
+<tr class='label_row'><td rowspan='4' class='overview'>Overivew</td><td class='label'>Label</td><td class='value'>Country Code</td></tr>
+<tr class='uri_row'><td class='label'>URI</td><td class='value'>http://www.w3.org/2003/01/geo/wgs84_pos#countyCode</td></tr>
+</table>
+<p class='description'>The ISO 3166-1 two-letter country code</p>
+<div class='properties'><span class='label scrollable scrolldown'>Property for...</span>
+<ul class='appears_in' style='display:none'>
+<li><a href='#http://opendepot.org/reference/linked/1.0/Organisation' class='iri'>http://opendepot.org/reference/linked/1.0/Organisation</a></li>
+<li><a href='#http://opendepot.org/reference/linked/1.0/Repository' class='iri'>http://opendepot.org/reference/linked/1.0/Repository</a></li>
+</ul>
+</div>
+</div>
+<div class='ont_outer_div'>
+<a name='http://opendepot.org/reference/linked/1.0/dateChecked' class='target'></a>
+<div class='ont_class_name'><span class='label'>Property:</span> <span class='value'>http://opendepot.org/reference/linked/1.0/dateChecked</span></div>
+<table>
+<tr class='label_row'><td rowspan='4' class='overview'>Overivew</td><td class='label'>Label</td><td class='value'>Date Checked</td></tr>
+<tr class='uri_row'><td class='label'>URI</td><td class='value'>http://opendepot.org/reference/linked/1.0/dateChecked</td></tr>
+</table>
+<p class='description'>The date the URL was last checked</p>
+<div class='properties'><span class='label scrollable scrolldown'>Property for...</span>
+<ul class='appears_in' style='display:none'>
+<li><a href='#http://opendepot.org/reference/linked/1.0/Url' class='iri'>http://opendepot.org/reference/linked/1.0/Url</a></li>
+</ul>
+</div>
+</div>
+<div class='ont_outer_div'>
+<a name='http://opendepot.org/reference/linked/1.0/description' class='target'></a>
+<div class='ont_class_name'><span class='label'>Property:</span> <span class='value'>http://opendepot.org/reference/linked/1.0/description</span></div>
+<table>
+<tr class='label_row'><td rowspan='4' class='overview'>Overivew</td><td class='label'>Label</td><td class='value'>Description</td></tr>
+<tr class='uri_row'><td class='label'>URI</td><td class='value'>http://opendepot.org/reference/linked/1.0/description</td></tr>
+</table>
+<p class='description'>A description of the repository</p>
+<div class='properties'><span class='label scrollable scrolldown'>Property for...</span>
+<ul class='appears_in' style='display:none'>
+<li><a href='#http://opendepot.org/reference/linked/1.0/Repository' class='iri'>http://opendepot.org/reference/linked/1.0/Repository</a></li>
+</ul>
+</div>
+</div>
+<div class='ont_outer_div'>
+<a name='http://xmlns.com/foaf/0.1/homepage' class='target'></a>
+<div class='ont_class_name'><span class='label'>Property:</span> <span class='value'>http://xmlns.com/foaf/0.1/homepage</span></div>
+<table>
+<tr class='label_row'><td rowspan='4' class='overview'>Overivew</td><td class='label'>Label</td><td class='value'>FOAF Homepage</td></tr>
+<tr class='uri_row'><td class='label'>URI</td><td class='value'>http://xmlns.com/foaf/0.1/homepage</td></tr>
+</table>
+<p class='description'>URL of the website</p>
+<div class='properties'><span class='label scrollable scrolldown'>Property for...</span>
+<ul class='appears_in' style='display:none'>
+<li><a href='#http://opendepot.org/reference/linked/1.0/Organisation' class='iri'>http://opendepot.org/reference/linked/1.0/Organisation</a></li>
+<li><a href='#http://opendepot.org/reference/linked/1.0/Repository' class='iri'>http://opendepot.org/reference/linked/1.0/Repository</a></li>
+</ul>
+</div>
+</div>
+<div class='ont_outer_div'>
+<a name='http://www.w3.org/2003/01/geo/wgs84_pos#lat' class='target'></a>
+<div class='ont_class_name'><span class='label'>Property:</span> <span class='value'>http://www.w3.org/2003/01/geo/wgs84_pos#lat</span></div>
+<table>
+<tr class='label_row'><td rowspan='4' class='overview'>Overivew</td><td class='label'>Label</td><td class='value'>Geo Latitude</td></tr>
+<tr class='uri_row'><td class='label'>URI</td><td class='value'>http://www.w3.org/2003/01/geo/wgs84_pos#lat</td></tr>
+</table>
+<p class='description'>Latitude value of the object geographical position. A decimal notation in degrees</p>
+<div class='properties'><span class='label scrollable scrolldown'>Property for...</span>
+<ul class='appears_in' style='display:none'>
+<li><a href='#http://opendepot.org/reference/linked/1.0/Organisation' class='iri'>http://opendepot.org/reference/linked/1.0/Organisation</a></li>
+<li><a href='#http://opendepot.org/reference/linked/1.0/Repository' class='iri'>http://opendepot.org/reference/linked/1.0/Repository</a></li>
+</ul>
+</div>
+</div>
+<div class='ont_outer_div'>
+<a name='http://www.w3.org/2003/01/geo/wgs84_pos#long' class='target'></a>
+<div class='ont_class_name'><span class='label'>Property:</span> <span class='value'>http://www.w3.org/2003/01/geo/wgs84_pos#long</span></div>
+<table>
+<tr class='label_row'><td rowspan='4' class='overview'>Overivew</td><td class='label'>Label</td><td class='value'>Geo Longitude</td></tr>
+<tr class='uri_row'><td class='label'>URI</td><td class='value'>http://www.w3.org/2003/01/geo/wgs84_pos#long</td></tr>
+</table>
+<p class='description'>Longitude value of the object geographical position. A decimal notation in degrees</p>
+<div class='properties'><span class='label scrollable scrolldown'>Property for...</span>
+<ul class='appears_in' style='display:none'>
+<li><a href='#http://opendepot.org/reference/linked/1.0/Organisation' class='iri'>http://opendepot.org/reference/linked/1.0/Organisation</a></li>
+<li><a href='#http://opendepot.org/reference/linked/1.0/Repository' class='iri'>http://opendepot.org/reference/linked/1.0/Repository</a></li>
+</ul>
+</div>
+</div>
+<div class='ont_outer_div'>
+<a name='http://www.geonames.org/ontology#alternateName' class='target'></a>
+<div class='ont_class_name'><span class='label'>Property:</span> <span class='value'>http://www.geonames.org/ontology#alternateName</span></div>
+<table>
+<tr class='label_row'><td rowspan='4' class='overview'>Overivew</td><td class='label'>Label</td><td class='value'>Geonames Alternative Name</td></tr>
+<tr class='uri_row'><td class='label'>URI</td><td class='value'>http://www.geonames.org/ontology#alternateName</td></tr>
+</table>
+<p class='description'>The alternative name for the Organisation</p>
+<div class='properties'><span class='label scrollable scrolldown'>Property for...</span>
+<ul class='appears_in' style='display:none'>
+<li><a href='#http://opendepot.org/reference/linked/1.0/Organisation' class='iri'>http://opendepot.org/reference/linked/1.0/Organisation</a></li>
+<li><a href='#http://opendepot.org/reference/linked/1.0/Repository' class='iri'>http://opendepot.org/reference/linked/1.0/Repository</a></li>
+<li><a href='#http://opendepot.org/reference/linked/1.0/Network' class='iri'>http://opendepot.org/reference/linked/1.0/Network</a></li>
+</ul>
+</div>
+</div>
+<div class='ont_outer_div'>
+<a name='http://www.geonames.org/ontology#name' class='target'></a>
+<div class='ont_class_name'><span class='label'>Property:</span> <span class='value'>http://www.geonames.org/ontology#name</span></div>
+<table>
+<tr class='label_row'><td rowspan='4' class='overview'>Overivew</td><td class='label'>Label</td><td class='value'>Geonames Name</td></tr>
+<tr class='uri_row'><td class='label'>URI</td><td class='value'>http://www.geonames.org/ontology#name</td></tr>
+</table>
+<p class='description'>The name of the Organisation. Organisations are (generally) places so have a geographic name, unlike repositories & networks which have Dublin Core Titles</p>
+<div class='properties'><span class='label scrollable scrolldown'>Property for...</span>
+<ul class='appears_in' style='display:none'>
+<li><a href='#http://opendepot.org/reference/linked/1.0/Organisation' class='iri'>http://opendepot.org/reference/linked/1.0/Organisation</a></li>
+</ul>
+</div>
+</div>
+<div class='ont_outer_div'>
+<a name='http://rdfs.org/sioc/ns#has_administrator' class='target'></a>
+<div class='ont_class_name'><span class='label'>Property:</span> <span class='value'>http://rdfs.org/sioc/ns#has_administrator</span></div>
+<table>
+<tr class='label_row'><td rowspan='4' class='overview'>Overivew</td><td class='label'>Label</td><td class='value'>Has Administrator</td></tr>
+<tr class='uri_row'><td class='label'>URI</td><td class='value'>http://rdfs.org/sioc/ns#has_administrator</td></tr>
+<tr class='range_row'><td class='label'>Has a value of</td><td class='value'><a href='#http://opendepot.org/reference/linked/1.0/Agent' class='iri'>http://opendepot.org/reference/linked/1.0/Agent</a></td></tr>
+</table>
+<p class='description'>The person that is an administrator of the repository.</p>
+<div class='properties'><span class='label scrollable scrolldown'>Property for...</span>
+<ul class='appears_in' style='display:none'>
+<li><a href='#http://opendepot.org/reference/linked/1.0/Repository' class='iri'>http://opendepot.org/reference/linked/1.0/Repository</a></li>
+</ul>
+</div>
+</div>
+<div class='ont_outer_div'>
+<a name='http://opendepot.org/reference/linked/1.0/hasNetwork' class='target'></a>
+<div class='ont_class_name'><span class='label'>Property:</span> <span class='value'>http://opendepot.org/reference/linked/1.0/hasNetwork</span></div>
+<table>
+<tr class='label_row'><td rowspan='4' class='overview'>Overivew</td><td class='label'>Label</td><td class='value'>Has Network</td></tr>
+<tr class='uri_row'><td class='label'>URI</td><td class='value'>http://opendepot.org/reference/linked/1.0/hasNetwork</td></tr>
+<tr class='range_row'><td class='label'>Has a value of</td><td class='value'><a href='#http://opendepot.org/reference/linked/1.0/Network' class='iri'>http://opendepot.org/reference/linked/1.0/Network</a></td></tr>
+</table>
+<p class='description'>The IRI for the oarj:network record this item links to</p>
+<div class='properties'><span class='label scrollable scrolldown'>Property for...</span>
+<ul class='appears_in' style='display:none'>
+<li><a href='#http://opendepot.org/reference/linked/1.0/Organisation' class='iri'>http://opendepot.org/reference/linked/1.0/Organisation</a></li>
+</ul>
+</div>
+</div>
+<div class='ont_outer_div'>
+<a name='http://opendepot.org/reference/linked/1.0/hasOrganisation' class='target'></a>
+<div class='ont_class_name'><span class='label'>Property:</span> <span class='value'>http://opendepot.org/reference/linked/1.0/hasOrganisation</span></div>
+<table>
+<tr class='label_row'><td rowspan='4' class='overview'>Overivew</td><td class='label'>Label</td><td class='value'>Has Organisation</td></tr>
+<tr class='uri_row'><td class='label'>URI</td><td class='value'>http://opendepot.org/reference/linked/1.0/hasOrganisation</td></tr>
+<tr class='range_row'><td class='label'>Has a value of</td><td class='value'><a href='#http://opendepot.org/reference/linked/1.0/Organisation' class='iri'>http://opendepot.org/reference/linked/1.0/Organisation</a></td></tr>
+</table>
+<p class='description'>The IRI for the oarj:organisation record this item links to</p>
+<div class='properties'><span class='label scrollable scrolldown'>Property for...</span>
+<ul class='appears_in' style='display:none'>
+<li><a href='#http://opendepot.org/reference/linked/1.0/Network' class='iri'>http://opendepot.org/reference/linked/1.0/Network</a></li>
+<li><a href='#http://opendepot.org/reference/linked/1.0/Url' class='iri'>http://opendepot.org/reference/linked/1.0/Url</a></li>
+</ul>
+</div>
+</div>
+<div class='ont_outer_div'>
+<a name='http://opendepot.org/reference/linked/1.0/hasRepository' class='target'></a>
+<div class='ont_class_name'><span class='label'>Property:</span> <span class='value'>http://opendepot.org/reference/linked/1.0/hasRepository</span></div>
+<table>
+<tr class='label_row'><td rowspan='4' class='overview'>Overivew</td><td class='label'>Label</td><td class='value'>Has Repository</td></tr>
+<tr class='uri_row'><td class='label'>URI</td><td class='value'>http://opendepot.org/reference/linked/1.0/hasRepository</td></tr>
+<tr class='equivelant_row'><td class='label'>Equivelant to...</td><td class='value'>http://purl.org/spar/fabio/Repository</td></tr>
+<tr class='range_row'><td class='label'>Has a value of</td><td class='value'><a href='#http://opendepot.org/reference/linked/1.0/Repository' class='iri'>http://opendepot.org/reference/linked/1.0/Repository</a></td></tr>
+</table>
+<p class='description'>Organisations are linked to Repositories. The IRI defines the oarj:Repository this Organisation has</p>
+<div class='properties'><span class='label scrollable scrolldown'>Property for...</span>
+<ul class='appears_in' style='display:none'>
+<li><a href='#http://opendepot.org/reference/linked/1.0/Organisation' class='iri'>http://opendepot.org/reference/linked/1.0/Organisation</a></li>
+</ul>
+</div>
+</div>
+<div class='ont_outer_div'>
+<a name='http://opendepot.org/reference/linked/1.0/hasURL' class='target'></a>
+<div class='ont_class_name'><span class='label'>Property:</span> <span class='value'>http://opendepot.org/reference/linked/1.0/hasURL</span></div>
+<table>
+<tr class='label_row'><td rowspan='4' class='overview'>Overivew</td><td class='label'>Label</td><td class='value'>Has URL</td></tr>
+<tr class='uri_row'><td class='label'>URI</td><td class='value'>http://opendepot.org/reference/linked/1.0/hasURL</td></tr>
+<tr class='range_row'><td class='label'>Has a value of</td><td class='value'><a href='#http://opendepot.org/reference/linked/1.0/Url' class='iri'>http://opendepot.org/reference/linked/1.0/Url</a></td></tr>
+</table>
+<p class='description'>The IRI for the oarj:Url record this item links to</p>
+<div class='properties'><span class='label scrollable scrolldown'>Property for...</span>
+<ul class='appears_in' style='display:none'>
+<li><a href='#http://opendepot.org/reference/linked/1.0/Organisation' class='iri'>http://opendepot.org/reference/linked/1.0/Organisation</a></li>
+<li><a href='#http://opendepot.org/reference/linked/1.0/Repository' class='iri'>http://opendepot.org/reference/linked/1.0/Repository</a></li>
+</ul>
+</div>
+</div>
+<div class='ont_outer_div'>
+<a name='http://opendepot.org/reference/linked/1.0/ipRange' class='target'></a>
+<div class='ont_class_name'><span class='label'>Property:</span> <span class='value'>http://opendepot.org/reference/linked/1.0/ipRange</span></div>
+<table>
+<tr class='label_row'><td rowspan='4' class='overview'>Overivew</td><td class='label'>Label</td><td class='value'>IP Range</td></tr>
+<tr class='uri_row'><td class='label'>URI</td><td class='value'>http://opendepot.org/reference/linked/1.0/ipRange</td></tr>
+</table>
+<p class='description'>The IP range for the network. The client will be required to split the value on '-' to retrieve the upper and lower numbers</p>
+<div class='properties'><span class='label scrollable scrolldown'>Property for...</span>
+<ul class='appears_in' style='display:none'>
+<li><a href='#http://opendepot.org/reference/linked/1.0/Network' class='iri'>http://opendepot.org/reference/linked/1.0/Network</a></li>
+</ul>
+</div>
+</div>
+<div class='ont_outer_div'>
+<a name='http://www.lexvo.org/ontology#iso639P1Code' class='target'></a>
+<div class='ont_class_name'><span class='label'>Property:</span> <span class='value'>http://www.lexvo.org/ontology#iso639P1Code</span></div>
+<table>
+<tr class='label_row'><td rowspan='4' class='overview'>Overivew</td><td class='label'>Label</td><td class='value'>ISO 639-1 code</td></tr>
+<tr class='uri_row'><td class='label'>URI</td><td class='value'>http://www.lexvo.org/ontology#iso639P1Code</td></tr>
+</table>
+<p class='description'>The property of a resource being mainly encoded in a specific language.</p>
+<div class='properties'><span class='label scrollable scrolldown'>Property for...</span>
+<ul class='appears_in' style='display:none'>
+<li><a href='#http://opendepot.org/reference/linked/1.0/Repository' class='iri'>http://opendepot.org/reference/linked/1.0/Repository</a></li>
+</ul>
+</div>
+</div>
+<div class='ont_outer_div'>
+<a name='http://opendepot.org/reference/linked/1.0/identifier' class='target'></a>
+<div class='ont_class_name'><span class='label'>Property:</span> <span class='value'>http://opendepot.org/reference/linked/1.0/identifier</span></div>
+<table>
+<tr class='label_row'><td rowspan='4' class='overview'>Overivew</td><td class='label'>Label</td><td class='value'>Identifier</td></tr>
+<tr class='uri_row'><td class='label'>URI</td><td class='value'>http://opendepot.org/reference/linked/1.0/identifier</td></tr>
+</table>
+<p class='description'>Item identifier code within the Organisation and Repository Identification database, and the number one uses to identifiy the item via the ORI APIs</p>
+<div class='properties'><span class='label scrollable scrolldown'>Property for...</span>
+<ul class='appears_in' style='display:none'>
+<li><a href='#http://opendepot.org/reference/linked/1.0/Network' class='iri'>http://opendepot.org/reference/linked/1.0/Network</a></li>
+<li><a href='#http://opendepot.org/reference/linked/1.0/Repository' class='iri'>http://opendepot.org/reference/linked/1.0/Repository</a></li>
+<li><a href='#http://opendepot.org/reference/linked/1.0/Organisation' class='iri'>http://opendepot.org/reference/linked/1.0/Organisation</a></li>
+<li><a href='#http://rdfs.org/ns/void#Dataset' class='iri'>http://rdfs.org/ns/void#Dataset</a></li>
+</ul>
+</div>
+</div>
+<div class='ont_outer_div'>
+<a name='http://opendepot.org/reference/linked/1.0/isRepositoryType' class='target'></a>
+<div class='ont_class_name'><span class='label'>Property:</span> <span class='value'>http://opendepot.org/reference/linked/1.0/isRepositoryType</span></div>
+<table>
+<tr class='label_row'><td rowspan='4' class='overview'>Overivew</td><td class='label'>Label</td><td class='value'>Is of Repository Type</td></tr>
+<tr class='uri_row'><td class='label'>URI</td><td class='value'>http://opendepot.org/reference/linked/1.0/isRepositoryType</td></tr>
+<tr class='range_row'><td class='label'>Has a value of</td><td class='value'><a href='#http://opendepot.org/reference/linked/1.0/RepositoryType' class='iri'>http://opendepot.org/reference/linked/1.0/RepositoryType</a></td></tr>
+</table>
+<p class='description'>There are a variety of repository types. The IRI defines the oarj:RepositoryType this repository has been classed as.</p>
+<div class='properties'><span class='label scrollable scrolldown'>Property for...</span>
+<ul class='appears_in' style='display:none'>
+<li><a href='#http://opendepot.org/reference/linked/1.0/Repository' class='iri'>http://opendepot.org/reference/linked/1.0/Repository</a></li>
+</ul>
+</div>
+</div>
+<div class='ont_outer_div'>
+<a name='http://opendepot.org/reference/linked/1.0/namepreferred' class='target'></a>
+<div class='ont_class_name'><span class='label'>Property:</span> <span class='value'>http://opendepot.org/reference/linked/1.0/namepreferred</span></div>
+<table>
+<tr class='label_row'><td rowspan='4' class='overview'>Overivew</td><td class='label'>Label</td><td class='value'>NamePreferred</td></tr>
+<tr class='uri_row'><td class='label'>URI</td><td class='value'>http://opendepot.org/reference/linked/1.0/namepreferred</td></tr>
+</table>
+<p class='description'>Defined as "true" if the Acronym is present, however the name is the preferred title to present</p>
+<div class='properties'><span class='label scrollable scrolldown'>Property for...</span>
+<ul class='appears_in' style='display:none'>
+<li><a href='#http://opendepot.org/reference/linked/1.0/Repository' class='iri'>http://opendepot.org/reference/linked/1.0/Repository</a></li>
+<li><a href='#http://opendepot.org/reference/linked/1.0/Organisation' class='iri'>http://opendepot.org/reference/linked/1.0/Organisation</a></li>
+</ul>
+</div>
+</div>
+<div class='ont_outer_div'>
+<a name='http://opendepot.org/reference/linked/1.0/oaiBaseUrl' class='target'></a>
+<div class='ont_class_name'><span class='label'>Property:</span> <span class='value'>http://opendepot.org/reference/linked/1.0/oaiBaseUrl</span></div>
+<table>
+<tr class='label_row'><td rowspan='4' class='overview'>Overivew</td><td class='label'>Label</td><td class='value'>OAI-PMH URL</td></tr>
+<tr class='uri_row'><td class='label'>URI</td><td class='value'>http://opendepot.org/reference/linked/1.0/oaiBaseUrl</td></tr>
+<tr class='equivelant_row'><td class='label'>Equivelant to...</td><td class='value'>http://eprints.org/ontology/OAIPMH2</td></tr>
+</table>
+<p class='description'>The base URL to use to query this repository via OAI-PMH.</p>
+<div class='properties'><span class='label scrollable scrolldown'>Property for...</span>
+<ul class='appears_in' style='display:none'>
+<li><a href='#http://opendepot.org/reference/linked/1.0/Repository' class='iri'>http://opendepot.org/reference/linked/1.0/Repository</a></li>
+</ul>
+</div>
+</div>
+<div class='ont_outer_div'>
+<a name='http://www.w3.org/ns/org#subOrgansationOf' class='target'></a>
+<div class='ont_class_name'><span class='label'>Property:</span> <span class='value'>http://www.w3.org/ns/org#subOrgansationOf</span></div>
+<table>
+<tr class='label_row'><td rowspan='4' class='overview'>Overivew</td><td class='label'>Label</td><td class='value'>ORG SubOrganizationOf</td></tr>
+<tr class='uri_row'><td class='label'>URI</td><td class='value'>http://www.w3.org/ns/org#subOrgansationOf</td></tr>
+<tr class='range_row'><td class='label'>Has a value of</td><td class='value'><a href='#http://opendepot.org/reference/linked/1.0/Organisation' class='iri'>http://opendepot.org/reference/linked/1.0/Organisation</a></td></tr>
+</table>
+<p class='description'>Represents hierarchical containment of Organizations or Organizational Units; indicates an organization which is a sub-part or child of this organization.</p>
+<div class='properties'><span class='label scrollable scrolldown'>Property for...</span>
+<ul class='appears_in' style='display:none'>
+<li><a href='#http://opendepot.org/reference/linked/1.0/Organisation' class='iri'>http://opendepot.org/reference/linked/1.0/Organisation</a></li>
+<li><a href='#http://opendepot.org/reference/linked/1.0/Repository' class='iri'>http://opendepot.org/reference/linked/1.0/Repository</a></li>
+</ul>
+</div>
+</div>
+<div class='ont_outer_div'>
+<a name='http://rdfs.org/sioc/ns#administrator_of' class='target'></a>
+<div class='ont_class_name'><span class='label'>Property:</span> <span class='value'>http://rdfs.org/sioc/ns#administrator_of</span></div>
+<table>
+<tr class='label_row'><td rowspan='4' class='overview'>Overivew</td><td class='label'>Label</td><td class='value'>SIOC Administrator Of</td></tr>
+<tr class='uri_row'><td class='label'>URI</td><td class='value'>http://rdfs.org/sioc/ns#administrator_of</td></tr>
+<tr class='range_row'><td class='label'>Has a value of</td><td class='value'><a href='#http://opendepot.org/reference/linked/1.0/Repository' class='iri'>http://opendepot.org/reference/linked/1.0/Repository</a></td></tr>
+</table>
+<p class='description'>The repository that the person is an administrator of.</p>
+<div class='properties'><span class='label scrollable scrolldown'>Property for...</span>
+<ul class='appears_in' style='display:none'>
+<li><a href='#http://opendepot.org/reference/linked/1.0/Agent' class='iri'>http://opendepot.org/reference/linked/1.0/Agent</a></li>
+</ul>
+</div>
+</div>
+<div class='ont_outer_div'>
+<a name='http://opendepot.org/reference/linked/1.0/swordEndpoint' class='target'></a>
+<div class='ont_class_name'><span class='label'>Property:</span> <span class='value'>http://opendepot.org/reference/linked/1.0/swordEndpoint</span></div>
+<table>
+<tr class='label_row'><td rowspan='4' class='overview'>Overivew</td><td class='label'>Label</td><td class='value'>SWORD Endpoint</td></tr>
+<tr class='uri_row'><td class='label'>URI</td><td class='value'>http://opendepot.org/reference/linked/1.0/swordEndpoint</td></tr>
+</table>
+<p class='description'>The location of the servicedocument page for a repository</p>
+<div class='properties'><span class='label scrollable scrolldown'>Property for...</span>
+<ul class='appears_in' style='display:none'>
+<li><a href='#http://opendepot.org/reference/linked/1.0/Repository' class='iri'>http://opendepot.org/reference/linked/1.0/Repository</a></li>
+</ul>
+</div>
+</div>
+<div class='ont_outer_div'>
+<a name='http://www.w3.org/2000/01/rdf-schema#seeAlso' class='target'></a>
+<div class='ont_class_name'><span class='label'>Property:</span> <span class='value'>http://www.w3.org/2000/01/rdf-schema#seeAlso</span></div>
+<table>
+<tr class='label_row'><td rowspan='4' class='overview'>Overivew</td><td class='label'>Label</td><td class='value'>See Also</td></tr>
+<tr class='uri_row'><td class='label'>URI</td><td class='value'>http://www.w3.org/2000/01/rdf-schema#seeAlso</td></tr>
+</table>
+<p class='description'>Further information about the subject resource - normally a reference to an [authoritative] source.</p>
+<div class='properties'><span class='label scrollable scrolldown'>Property for...</span>
+<ul class='appears_in' style='display:none'>
+<li><a href='#http://opendepot.org/reference/linked/1.0/Repository' class='iri'>http://opendepot.org/reference/linked/1.0/Repository</a></li>
+</ul>
+</div>
+</div>
+<div class='ont_outer_div'>
+<a name='http://opendepot.org/reference/linked/1.0/softwareName' class='target'></a>
+<div class='ont_class_name'><span class='label'>Property:</span> <span class='value'>http://opendepot.org/reference/linked/1.0/softwareName</span></div>
+<table>
+<tr class='label_row'><td rowspan='4' class='overview'>Overivew</td><td class='label'>Label</td><td class='value'>Software Name</td></tr>
+<tr class='uri_row'><td class='label'>URI</td><td class='value'>http://opendepot.org/reference/linked/1.0/softwareName</td></tr>
+</table>
+<p class='description'>The name of the software application for the repository (Greenstone, Intrallect, Fedora, etc)</p>
+<div class='properties'><span class='label scrollable scrolldown'>Property for...</span>
+<ul class='appears_in' style='display:none'>
+<li><a href='#http://opendepot.org/reference/linked/1.0/Repository' class='iri'>http://opendepot.org/reference/linked/1.0/Repository</a></li>
+</ul>
+</div>
+</div>
+<div class='ont_outer_div'>
+<a name='http://opendepot.org/reference/linked/1.0/softwareVersion' class='target'></a>
+<div class='ont_class_name'><span class='label'>Property:</span> <span class='value'>http://opendepot.org/reference/linked/1.0/softwareVersion</span></div>
+<table>
+<tr class='label_row'><td rowspan='4' class='overview'>Overivew</td><td class='label'>Label</td><td class='value'>Software Version</td></tr>
+<tr class='uri_row'><td class='label'>URI</td><td class='value'>http://opendepot.org/reference/linked/1.0/softwareVersion</td></tr>
+</table>
+<p class='description'>The version of the software application (1.2.3, 2.3-beta, etc)</p>
+<div class='properties'><span class='label scrollable scrolldown'>Property for...</span>
+<ul class='appears_in' style='display:none'>
+<li><a href='#http://opendepot.org/reference/linked/1.0/Repository' class='iri'>http://opendepot.org/reference/linked/1.0/Repository</a></li>
+</ul>
+</div>
+</div>
+<div class='ont_outer_div'>
+<a name='http://purl.org/dc/terms/title' class='target'></a>
+<div class='ont_class_name'><span class='label'>Property:</span> <span class='value'>http://purl.org/dc/terms/title</span></div>
+<table>
+<tr class='label_row'><td rowspan='4' class='overview'>Overivew</td><td class='label'>Label</td><td class='value'>Title</td></tr>
+<tr class='uri_row'><td class='label'>URI</td><td class='value'>http://purl.org/dc/terms/title</td></tr>
+</table>
+<p class='description'>The name for the object. Organisations are (generally) places, so have a Geonames 'name'</p>
+<div class='properties'><span class='label scrollable scrolldown'>Property for...</span>
+<ul class='appears_in' style='display:none'>
+<li><a href='#http://opendepot.org/reference/linked/1.0/Repository' class='iri'>http://opendepot.org/reference/linked/1.0/Repository</a></li>
+<li><a href='#http://opendepot.org/reference/linked/1.0/Network' class='iri'>http://opendepot.org/reference/linked/1.0/Network</a></li>
+<li><a href='#http://opendepot.org/reference/linked/1.0/RepositoryType' class='iri'>http://opendepot.org/reference/linked/1.0/RepositoryType</a></li>
+<li><a href='#http://opendepot.org/reference/linked/1.0/RepositoryContentType' class='iri'>http://opendepot.org/reference/linked/1.0/RepositoryContentType</a></li>
+</ul>
+</div>
+</div>
+<div class='ont_outer_div'>
+<a name='http://opendepot.org/reference/linked/1.0/url' class='target'></a>
+<div class='ont_class_name'><span class='label'>Property:</span> <span class='value'>http://opendepot.org/reference/linked/1.0/url</span></div>
+<table>
+<tr class='label_row'><td rowspan='4' class='overview'>Overivew</td><td class='label'>Label</td><td class='value'>Url</td></tr>
+<tr class='uri_row'><td class='label'>URI</td><td class='value'>http://opendepot.org/reference/linked/1.0/url</td></tr>
+</table>
+<p class='description'>The actual URL</p>
+<div class='properties'><span class='label scrollable scrolldown'>Property for...</span>
+<ul class='appears_in' style='display:none'>
+<li><a href='#http://opendepot.org/reference/linked/1.0/Url' class='iri'>http://opendepot.org/reference/linked/1.0/Url</a></li>
+</ul>
+</div>
+</div>
+<div class='ont_outer_div'>
+<a name='http://www.w3.org/2006/vcard/ns#email' class='target'></a>
+<div class='ont_class_name'><span class='label'>Property:</span> <span class='value'>http://www.w3.org/2006/vcard/ns#email</span></div>
+<table>
+<tr class='label_row'><td rowspan='4' class='overview'>Overivew</td><td class='label'>Label</td><td class='value'>VCard Email</td></tr>
+<tr class='uri_row'><td class='label'>URI</td><td class='value'>http://www.w3.org/2006/vcard/ns#email</td></tr>
+</table>
+<p class='description'>An Email Addresses for the person</p>
+<div class='properties'><span class='label scrollable scrolldown'>Property for...</span>
+<ul class='appears_in' style='display:none'>
+<li><a href='#http://opendepot.org/reference/linked/1.0/Agent' class='iri'>http://opendepot.org/reference/linked/1.0/Agent</a></li>
+</ul>
+</div>
+</div>
+<div class='ont_outer_div'>
+<a name='http://www.w3.org/2006/vcard/ns#role' class='target'></a>
+<div class='ont_class_name'><span class='label'>Property:</span> <span class='value'>http://www.w3.org/2006/vcard/ns#role</span></div>
+<table>
+<tr class='label_row'><td rowspan='4' class='overview'>Overivew</td><td class='label'>Label</td><td class='value'>VCard Role</td></tr>
+<tr class='uri_row'><td class='label'>URI</td><td class='value'>http://www.w3.org/2006/vcard/ns#role</td></tr>
+</table>
+<p class='description'>The name of the job or role the person plays within an organization</p>
+<div class='properties'><span class='label scrollable scrolldown'>Property for...</span>
+<ul class='appears_in' style='display:none'>
+<li><a href='#http://opendepot.org/reference/linked/1.0/Agent' class='iri'>http://opendepot.org/reference/linked/1.0/Agent</a></li>
+</ul>
+</div>
+</div>
+<div class='ont_outer_div'>
+<a name='http://www.w3.org/2006/vcard/ns#tel' class='target'></a>
+<div class='ont_class_name'><span class='label'>Property:</span> <span class='value'>http://www.w3.org/2006/vcard/ns#tel</span></div>
+<table>
+<tr class='label_row'><td rowspan='4' class='overview'>Overivew</td><td class='label'>Label</td><td class='value'>VCard Tel</td></tr>
+<tr class='uri_row'><td class='label'>URI</td><td class='value'>http://www.w3.org/2006/vcard/ns#tel</td></tr>
+</table>
+<p class='description'>A telephone number for the person</p>
+<div class='properties'><span class='label scrollable scrolldown'>Property for...</span>
+<ul class='appears_in' style='display:none'>
+<li><a href='#http://opendepot.org/reference/linked/1.0/Agent' class='iri'>http://opendepot.org/reference/linked/1.0/Agent</a></li>
+</ul>
+</div>
+</div>
+</div></body>
+</html>
